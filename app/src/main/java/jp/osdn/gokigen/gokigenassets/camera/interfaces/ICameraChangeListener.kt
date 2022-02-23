@@ -1,0 +1,13 @@
+package jp.osdn.gokigen.gokigenassets.camera.interfaces
+
+interface ICameraChangeListener
+{
+    fun onApiListModified(apis: List<String?>?)
+    fun onCameraStatusChanged(status: String?)
+    fun onLiveviewStatusChanged(status: Boolean)
+    fun onShootModeChanged(shootMode: String?)
+    fun onZoomPositionChanged(zoomPosition: Int)
+    fun onStorageIdChanged(storageId: String?)
+    fun onFocusStatusChanged(focusStatus: String?)
+    fun onResponseError()
+}
