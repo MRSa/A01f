@@ -341,6 +341,8 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         return (number)
     }
 
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+
     /**
      *
      *

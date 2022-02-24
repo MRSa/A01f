@@ -4,13 +4,12 @@ import android.content.ContentValues
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import com.google.android.material.snackbar.Snackbar
 import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_MAIN_ACTIVITY_LAYOUT
 import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_MESSAGE_LABEL_CAPTURE_SUCCESS
 import java.io.File
 import java.text.SimpleDateFormat
@@ -86,11 +85,7 @@ class ImageStoreExternalLegacy(private val context: FragmentActivity) : IImageSt
                     override fun onImageSaved(output: ImageCapture.OutputFileResults)
                     {
                         val msg = context.getString(ID_MESSAGE_LABEL_CAPTURE_SUCCESS) + " ${outputDir.canonicalPath}/$photoFile"
-                        Snackbar.make(
-                            context.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(
-                                ID_MAIN_ACTIVITY_LAYOUT
-                            ), msg, Snackbar.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(context.baseContext, msg, Toast.LENGTH_SHORT).show()
                         Log.v(TAG, msg)
                     }
                 })

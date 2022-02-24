@@ -8,7 +8,7 @@ import net.osdn.gokigen.objectdetection.a01f.R
 interface IApplicationConstantConvert
 {
     companion object {
-        const val ID_MAIN_ACTIVITY_LAYOUT = R.id.main_layout
+        //const val ID_MAIN_ACTIVITY_LAYOUT = R.id.main_layout
         const val ID_AREA_MESSAGE = R.id.message
 
         const val ID_DRAWABLE_SPLASH_IMAGE = R.drawable.a01f

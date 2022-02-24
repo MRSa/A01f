@@ -30,13 +30,14 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val number : Int = 0) : ICameraControl
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val number : Int = 0) : ICameraControl, ICameraShutter
 {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var liveViewListener : CameraLiveViewListenerImpl
     private lateinit var fileControl : FileControl
     private lateinit var storeImage : StoreImage
     private lateinit var cameraXCamera : Camera
+    private lateinit var clickKeyDownListener : CameraClickKeyDownListener
     private var cameraIsStarted = false
     private val cameraXCameraControl = CameraXCameraControl()
     private val cameraXCameraStatusHolder = CameraXCameraStatusHolder(cameraXCameraControl)
@@ -56,6 +57,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         storeImage = StoreImage(activity, liveViewListener)
         clickKeyDownListeners.clear()
         fileControl = FileControl(activity, storeImage, vibrator)
+        clickKeyDownListener = CameraClickKeyDownListener(0, fileControl, null)
     }
 
     override fun connectToCamera()
@@ -337,6 +339,8 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         return (number)
     }
 
+    override fun getCameraShutter(id: Int): ICameraShutter? { return (this) }
+
     private fun getClickKeyDownListener(id : Int) : CameraClickKeyDownListener
     {
         try
@@ -359,6 +363,22 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?) { }
     override fun setNeighborCameraControlFinished() { }
     override fun getCameraStatus(): ICameraStatus { return (cameraXCameraStatusHolder) }
+
+    override fun doShutter()
+    {
+        try
+        {
+            if (::fileControl.isInitialized)
+            {
+                fileControl.takePhoto(0)
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+    override fun doShutterOff() { }
 
     companion object
     {

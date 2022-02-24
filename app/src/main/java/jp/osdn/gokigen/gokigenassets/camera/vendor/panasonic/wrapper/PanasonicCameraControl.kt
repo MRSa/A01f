@@ -433,4 +433,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     {
         return (number)
     }
+
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+
 }

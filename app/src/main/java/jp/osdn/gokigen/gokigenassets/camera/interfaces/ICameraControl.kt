@@ -27,6 +27,7 @@ interface ICameraControl
     fun getAnotherTouchListener(id : Int = 0) : View.OnTouchListener? = null
     fun getCameraStatus() : ICameraStatus?
     fun getCameraNumber() : Int
+    fun getCameraShutter(id: Int = 0) : ICameraShutter?
 
     fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     fun setNeighborCameraControlFinished()

@@ -122,6 +122,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
 
     override fun changeCaptureMode(mode: String) { }
     override fun needRotateImage(): Boolean { return (false) }
+
     override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {
         try
@@ -304,6 +305,8 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
     {
         return (number)
     }
+
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
 
     private fun captureImageLiveView() : Boolean
     {

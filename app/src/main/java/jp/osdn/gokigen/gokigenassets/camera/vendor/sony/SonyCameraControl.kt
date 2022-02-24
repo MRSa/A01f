@@ -427,4 +427,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     {
         return (number)
     }
+
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+
 }

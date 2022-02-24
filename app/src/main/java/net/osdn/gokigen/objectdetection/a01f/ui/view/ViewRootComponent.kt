@@ -1,7 +1,6 @@
 package net.osdn.gokigen.objectdetection.a01f.ui.view
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -75,7 +74,13 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
 @Composable
 fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl)
 {
-         // Adds view to Compose
+    Column()
+    {
+        //Button(onClick = {cameraControl.getCameraShutter()?.doShutter() } ) { Text(text = "Capture") }
+        IconButton(onClick = { cameraControl.getCameraShutter()?.doShutter() }) {
+            Icon(painter = painterResource(id = R.drawable.ic_baseline_camera_24), contentDescription = null )
+        }
+        // Adds view to Compose
         AndroidView(
             //modifier = Modifier.fillMaxSize(), // Occupy the max size in the Compose UI tree
             factory = { context ->
@@ -91,17 +96,16 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                     //    selectedItem.value = 1
                     //}
                 }
-            },
-            update = { view -> //view.invalidate()
-                // View's been inflated or state read in this block has been updated
-                // Add logic here if necessary
-
-                // As selectedItem is read here, AndroidView will recompose
-                // whenever the state changes
-                // Example of Compose -> View communication
-                //view.coordinator.selectedItem = selectedItem.value
             }
         )
+/*
+        IconButton(onClick = { cameraControl.getCameraShutter()?.doShutter() }) {
+            Icon(painter = painterResource(id = R.drawable.ic_baseline_camera_24), contentDescription = null )
+        }
+        Spacer(modifier = Modifier.width(2.dp))
+*/
+    }
+
 }
 
 
@@ -138,7 +142,12 @@ fun Common(text: String, action: () -> Unit)
                             painter = painterResource(R.drawable.a01f),
                             contentDescription = "sample0 picture",
                             modifier = Modifier
-                                .clickable { Log.v(ViewRootComponent::class.java.simpleName, "onClick!") }
+                                .clickable {
+                                    Log.v(
+                                        ViewRootComponent::class.java.simpleName,
+                                        "onClick!"
+                                    )
+                                }
                                 .size(80.dp, 80.dp)
                                 .border(1.5.dp, MaterialTheme.colors.secondary)
                                 .padding(4.dp)

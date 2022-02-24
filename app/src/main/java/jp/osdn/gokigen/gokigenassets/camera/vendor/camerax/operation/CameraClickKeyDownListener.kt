@@ -3,6 +3,7 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.camerax.operation
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutter
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
@@ -28,7 +29,7 @@ class CameraClickKeyDownListener(private val cameraId : Int,  private val fileCo
         }
     }
 
-    private fun takePhoto()
+    fun takePhoto()
     {
         if (cachePositionProvider != null)
         {
@@ -38,7 +39,6 @@ class CameraClickKeyDownListener(private val cameraId : Int,  private val fileCo
         else
         {
             fileControl.takePhoto(cameraId)
-
         }
     }
 

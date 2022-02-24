@@ -90,6 +90,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     override fun getStatusColor(key: String): Int { return (Color.WHITE) }
     override fun setStatus(key: String, value: String) { }
     override fun getCameraNumber(): Int { return (number) }
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
 
     override fun setRefresher(id: Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {

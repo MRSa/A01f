@@ -358,4 +358,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
     {
         return (number)
     }
+
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+
 }

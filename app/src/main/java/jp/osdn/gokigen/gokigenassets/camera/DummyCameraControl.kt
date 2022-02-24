@@ -8,7 +8,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 
-class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown, ICameraStatus
+class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown, ICameraStatus, ICameraShutter
 {
     override fun getConnectionMethod(): String { return ("NONE") }
     override fun initialize() { }
@@ -27,6 +27,7 @@ class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.On
     override fun setNeighborCameraControlFinished() { }
     override fun getCameraStatus(): ICameraStatus { return (this) }
     override fun getCameraNumber(): Int { return (number) }
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
     override fun onClick(v: View?) { }
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
     override fun onLongClick(v: View?): Boolean { return (false) }
@@ -34,4 +35,6 @@ class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.On
     override fun getStatus(key: String): String { return ("") }
     override fun getStatusColor(key: String): Int { return (Color.WHITE) }
     override fun setStatus(key: String, value: String) { }
+    override fun doShutter() { }
+    override fun doShutterOff() { }
 }

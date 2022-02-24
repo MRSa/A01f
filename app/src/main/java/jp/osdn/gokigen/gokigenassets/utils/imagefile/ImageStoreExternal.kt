@@ -7,14 +7,13 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import com.google.android.material.snackbar.Snackbar
 import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_MAIN_ACTIVITY_LAYOUT
 import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_MESSAGE_LABEL_CAPTURE_SUCCESS
 import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_EXTERNAL_STORAGE_LOCATION
 import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE
@@ -148,12 +147,12 @@ class ImageStoreExternal(private val context: FragmentActivity) : IImageStore, I
                                 resolver.update(imageUri, values, null, null)
                             }
                             val msg = context.getString(ID_MESSAGE_LABEL_CAPTURE_SUCCESS) + " $path/$photoFile"
-                            //Toast.makeText(context.baseContext, msg, Toast.LENGTH_SHORT).show()
-                            Snackbar.make(
-                                context.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(
-                                    ID_MAIN_ACTIVITY_LAYOUT
-                                ), msg, Snackbar.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(context.baseContext, msg, Toast.LENGTH_SHORT).show()
+                            //Snackbar.make(
+                            //    context.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(
+                            //        ID_MAIN_ACTIVITY_LAYOUT
+                            //    ), msg, Snackbar.LENGTH_SHORT
+                            //).show()
                             Log.v(TAG, msg)
                         }
                     })

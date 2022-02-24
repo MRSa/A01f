@@ -3,13 +3,11 @@ package jp.osdn.gokigen.gokigenassets.utils.imagefile
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import com.google.android.material.snackbar.Snackbar
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_MAIN_ACTIVITY_LAYOUT
 import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_MESSAGE_LABEL_CAPTURE_SUCCESS
 import java.io.File
 import java.text.SimpleDateFormat
@@ -54,7 +52,7 @@ class ImageStoreLocal(private val context: FragmentActivity)
                     {
                         val savedUri = Uri.fromFile(photoFile)
                         val msg = context.getString(ID_MESSAGE_LABEL_CAPTURE_SUCCESS) + " $savedUri"
-                        Snackbar.make(context.findViewById<ConstraintLayout>(ID_MAIN_ACTIVITY_LAYOUT), msg, Snackbar.LENGTH_SHORT).show()
+                        Toast.makeText(context.baseContext, msg, Toast.LENGTH_SHORT).show()
                         Log.v(TAG, msg)
                     }
                 }

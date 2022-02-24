@@ -117,6 +117,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun doShutterOff() { }
     override fun getAnotherTouchListener(id : Int) : View.OnTouchListener { return (this) }
     override fun getCameraNumber(): Int { return (number) }
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
 
     override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     {
