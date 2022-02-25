@@ -50,6 +50,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     }
 
     fun getCameraControl() : ICameraControl { return (cameraControl0) }
+    fun getVibrator() : IVibrator { return (vibrator) }
 
     fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
     {
