@@ -1,15 +1,17 @@
 package net.osdn.gokigen.objectdetection.a01f
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.projection.MediaProjectionManager
 import android.os.*
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.KeyEvent
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
@@ -21,12 +23,14 @@ import net.osdn.gokigen.objectdetection.a01f.preference.PreferenceValueInitializ
 import net.osdn.gokigen.objectdetection.a01f.scene.SceneChanger
 import net.osdn.gokigen.objectdetection.a01f.ui.view.ViewRootComponent
 
-class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
+class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScreenCaptureControl
 {
     private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
     private val showMessage : ShowMessage = ShowMessage(this)
     private lateinit var sceneChanger : SceneChanger // = SceneChanger(this, showMessage)
     private lateinit var rootComponent : ViewRootComponent
+    //private lateinit var screenCaptureManager: MyScreenCaptureManager
+    //private lateinit var mediaProjectionManager: MediaProjectionManager
     private var connectionStatus : ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -36,12 +40,13 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         try
         {
             ///////// INITIALIZATION /////////
-            sceneChanger  = SceneChanger(this, showMessage, this, this)
+            sceneChanger  = SceneChanger(this, showMessage, this, this, this)
             PreferenceValueInitializer().initializePreferences(this)
+            //screenCaptureManager = MyScreenCaptureManager(this)
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setSceneChanger(sceneChanger)
+            rootComponent.setLiaisons(this, sceneChanger)
             setContent {
                 rootComponent.Content()
             }
@@ -57,6 +62,10 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 
         try
         {
+            //mediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+            //val permissionIntent = mediaProjectionManager.createScreenCaptureIntent()
+            //startActivityForResult(permissionIntent, REQUEST_CODE_FOR_SCREEN_CAPTURE)
+
             if (allPermissionsGranted())
             {
                 checkMediaWritePermission()
@@ -91,6 +100,17 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         }
     }
 
+    override fun onResume()
+    {
+        super.onResume()
+    }
+
+    override fun onPause()
+    {
+        super.onPause()
+        //screenCaptureManager.release()
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -119,6 +139,14 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         if (requestCode == REQUEST_CODE_OPEN_DOCUMENT_TREE)
         {
             accessPermission?.responseStorageAccessFrameworkLocation(resultCode, data)
+        }
+        if ((requestCode == REQUEST_CODE_FOR_SCREEN_CAPTURE)&&(resultCode == RESULT_OK)&&(data != null))
+        {
+            //if (::mediaProjectionManager.isInitialized)
+            //{
+                //screenCaptureManager.prepare(mediaProjectionManager.getMediaProjection(resultCode, data))
+                //takeScreenShot()
+            //}
         }
     }
 
@@ -282,6 +310,35 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         }
     }
 
+    override fun takeScreenShot()
+    {
+        //val permissionIntent = mediaProjectionManager.createScreenCaptureIntent()
+        //startActivityForResult(permissionIntent, REQUEST_CODE_FOR_SCREEN_CAPTURE)
+    }
+
+    override fun startScreenCapture()
+    {
+        try
+        {
+            val thread = Thread {
+                try
+                {
+                    //screenCaptureManager.takeScreenShot()
+                    vibrate(IVibrator.VibratePattern.SIMPLE_MIDDLE)
+                }
+                catch (t: Throwable)
+                {
+                    t.printStackTrace()
+                }
+            }
+            thread.start()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
     companion object
     {
         private val TAG = MainActivity::class.java.simpleName
@@ -289,6 +346,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         private const val REQUEST_CODE_PERMISSIONS = 10
         const val REQUEST_CODE_MEDIA_EDIT = 12
         const val REQUEST_CODE_OPEN_DOCUMENT_TREE = 20
+        const val REQUEST_CODE_FOR_SCREEN_CAPTURE = 30
 
         private val REQUIRED_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
