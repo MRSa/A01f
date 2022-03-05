@@ -36,19 +36,15 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
 {
     private val cameraCoordinator = CameraControlCoordinator(informationNotify)
     private var cameraXisCreated = false
-    private var isOnlySingleCamera = false
     private lateinit var cameraXControl0: ICameraControl
 
-    fun decideCameraControl(preferenceKey : String, number : Int) : ICameraControl
+    fun decideCameraControl(connectionMethod : String, number : Int) : ICameraControl
     {
         try
         {
             val wrapper = PreferenceAccessWrapper(activity)
-            isOnlySingleCamera = wrapper.getBoolean(USE_ONLY_SINGLE_CAMERA_X, USE_ONLY_SINGLE_CAMERA_X_DEFAULT_VALUE)
-
             val cameraPreference = setupCameraPreference0(wrapper)
-
-            return (when (cameraPreference.getCameraMethod()) {
+            return (when (connectionMethod) {
                 PREFERENCE_CAMERA_METHOD_NONE -> DummyCameraControl(number)
                 PREFERENCE_CAMERA_METHOD_CONSOLE -> prepareConsolePanelControl(cameraPreference, number)
                 PREFERENCE_CAMERA_METHOD_EXAMPLE -> prepareExamplePictureControl(cameraPreference, number)

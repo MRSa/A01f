@@ -64,6 +64,11 @@ interface IPreferencePropertyAccessor
         const val USE_GR2_SPECIAL_COMMAND = "use_gr2_command"
         const val PREFERENCE_CONNECTION_METHOD = "connection_method"
 
+
+        // --- CAMERA CONNECTION METHOD PREFERENCES
+        const val PREFERENCE_CAMERA_METHOD_INDEX = "camera_method"
+        const val PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE = "3"
+
         // --- CAMERA 1  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_1 = "camera_method1"
         const val PREFERENCE_CAMERA_METHOD_1_DEFAULT_VALUE = "camerax"

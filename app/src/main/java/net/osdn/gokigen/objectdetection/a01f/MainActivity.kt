@@ -196,38 +196,12 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
     {
         Log.v(TAG, " onStatusNotify() $message ")
         updateConnectionIcon(ICameraConnectionStatus.CameraConnectionStatus.CONNECTING)
-
-        try
-        {
-            runOnUiThread {
-                //if (liveView != null) {
-                //    liveView.invalidate()
-                //}
-            }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
     }
 
     override fun onCameraConnected()
     {
         Log.v(TAG, " onCameraConnected() ")
         updateConnectionIcon(ICameraConnectionStatus.CameraConnectionStatus.CONNECTED)
-
-        try
-        {
-            runOnUiThread {
-                //if (liveView != null) {
-                //    liveView.invalidate()
-                //}
-            }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
     }
 
     override fun onCameraDisconnected()

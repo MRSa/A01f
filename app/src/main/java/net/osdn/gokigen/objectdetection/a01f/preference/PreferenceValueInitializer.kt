@@ -371,6 +371,11 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_8, IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION5_8_DEFAULT_VALUE)
             }
 
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE)
+            }
+
             editor.apply()
         }
         catch (e : Exception)
