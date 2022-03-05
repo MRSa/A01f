@@ -3,9 +3,7 @@ package net.osdn.gokigen.objectdetection.a01f.ui.view
 import android.graphics.Color
 import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.IconToggleButton
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,12 +13,10 @@ import androidx.navigation.NavHostController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
-import net.osdn.gokigen.objectdetection.a01f.IScreenCaptureControl
 import net.osdn.gokigen.objectdetection.a01f.R
 
-
 @Composable
-fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, vibrator : IVibrator, screenCapture: IScreenCaptureControl)
+fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, vibrator : IVibrator)
 {
     var liveView0 : LiveImageView? = null
     var isGrid by remember { mutableStateOf(false) }
@@ -30,10 +26,10 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                //.height(140.dp)
+            //.height(140.dp)
         )
         {
-            Row( modifier = Modifier.align(Alignment.TopStart)) {
+            Row(modifier = Modifier.align(Alignment.TopStart)) {
                 IconButton(
                     onClick = { cameraControl.getCameraShutter()?.doShutter() },
                     enabled = true
@@ -53,9 +49,7 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                             painter = painterResource(id = R.drawable.ic_baseline_grid_on_24),
                             contentDescription = "Grid On"
                         )
-                    }
-                    else
-                    {
+                    } else {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_grid_off_24),
                             contentDescription = "Grid Off"
@@ -63,36 +57,26 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                     }
                 }
             }
-            Row( modifier = Modifier.align(Alignment.TopEnd)) {
-                IconButton(onClick = { screenCapture.startScreenCapture() }, enabled = false) {
-                    Icon(painter = painterResource(id = R.drawable.ic_baseline_screenshot_24), contentDescription = "ScreenShot" )
+            Row(modifier = Modifier.align(Alignment.TopEnd)) {
+                IconButton(onClick = { }, enabled = false) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_screenshot_24),
+                        contentDescription = "ScreenShot"
+                    )
                 }
                 IconButton(onClick = {
                     vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
                     navController.navigate("PreferenceScreen")
                 }, enabled = true) {
-                    Icon(painter = painterResource(id = R.drawable.ic_baseline_settings_24), contentDescription = "Preferences" )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_settings_24),
+                        contentDescription = "Preferences"
+                    )
                 }
             }
-       }
-/*
-        Row()
-        {
-            IconButton(onClick = { cameraControl.getCameraShutter()?.doShutter() }) {
-                Icon(painter = painterResource(id = R.drawable.ic_baseline_camera_24), contentDescription = "Capture" )
-            }
-            Spacer(modifier = Modifier.width(5.dp))
-            IconButton(onClick = {
-                vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
-                navController.navigate("PreferenceScreen")
-            }) {
-                Icon(painter = painterResource(id = R.drawable.ic_baseline_settings_24), contentDescription = "Preferences" )
-            }
         }
-*/
-        // Adds view to Compose
+
         AndroidView(
-            //modifier = Modifier.fillMaxSize(), // Occupy the max size in the Compose UI tree
             factory = { context ->
                 // Creates live-view screen
                 Log.v("", "$isGrid")
@@ -100,7 +84,6 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 liveView0 = liveView
                 cameraControl.setRefresher(0, liveView, liveView, liveView)
                 liveView.injectDisplay(cameraControl)
-                //liveView.showGridFrame(true, Color.WHITE)
                 liveView.invalidate()
                 liveView.apply { }
             },
@@ -108,29 +91,5 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 liveView0 = view
             }
         )
-/*
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-            //.height(140.dp)
-        )
-        {
-            IconButton(onClick = { cameraControl.getCameraShutter()?.doShutter() }, modifier = Modifier.align(Alignment.TopStart)) {
-                Icon(painter = painterResource(id = R.drawable.ic_baseline_camera_24), contentDescription = "Capture" )
-            }
-            IconButton(onClick = {
-                vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)
-                navController.navigate("PreferenceScreen")
-            }, modifier = Modifier.align(Alignment.TopEnd)) {
-                Icon(painter = painterResource(id = R.drawable.ic_baseline_settings_24), contentDescription = "Preferences" )
-            }
-        }
- */
-/*
-        IconButton(onClick = { cameraControl.getCameraShutter()?.doShutter() }) {
-            Icon(painter = painterResource(id = R.drawable.ic_baseline_camera_24), contentDescription = null )
-        }
-        Spacer(modifier = Modifier.width(2.dp))
-*/
     }
 }

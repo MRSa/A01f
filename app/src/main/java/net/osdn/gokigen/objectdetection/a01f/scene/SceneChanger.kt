@@ -4,15 +4,18 @@ import android.graphics.Color
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.mangle.scene.CameraProvider
-import net.osdn.gokigen.objectdetection.a01f.IScreenCaptureControl
 import net.osdn.gokigen.objectdetection.a01f.R
+import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
 
-class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver, private val screenCapture: IScreenCaptureControl)
+class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)
 {
     private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
     private val cameraControl0 = cameraProvider.getCameraXControl()
@@ -52,7 +55,6 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
 
     fun getCameraControl() : ICameraControl { return (cameraControl0) }
     fun getVibrator() : IVibrator { return (vibrator) }
-    fun getScreenCaptureControl() : IScreenCaptureControl { return (screenCapture) }
 
     fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
     {

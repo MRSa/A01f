@@ -1,9 +1,7 @@
 package net.osdn.gokigen.objectdetection.a01f
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.projection.MediaProjectionManager
 import android.os.*
 import android.util.Log
 import android.view.KeyEvent
@@ -14,23 +12,25 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.scene.ShowMessage
 import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
+import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
 import net.osdn.gokigen.objectdetection.a01f.preference.PreferenceValueInitializer
 import net.osdn.gokigen.objectdetection.a01f.scene.SceneChanger
 import net.osdn.gokigen.objectdetection.a01f.ui.view.ViewRootComponent
 
-class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScreenCaptureControl
+class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 {
     private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
     private val showMessage : ShowMessage = ShowMessage(this)
-    private lateinit var sceneChanger : SceneChanger // = SceneChanger(this, showMessage)
+    private lateinit var sceneChanger : SceneChanger
     private lateinit var rootComponent : ViewRootComponent
-    //private lateinit var screenCaptureManager: MyScreenCaptureManager
-    //private lateinit var mediaProjectionManager: MediaProjectionManager
+    private lateinit var a01fPrefs : A01fPrefsModel
+
     private var connectionStatus : ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -40,13 +40,14 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScr
         try
         {
             ///////// INITIALIZATION /////////
-            sceneChanger  = SceneChanger(this, showMessage, this, this, this)
+            sceneChanger  = SceneChanger(this, showMessage, this, this)
             PreferenceValueInitializer().initializePreferences(this)
-            //screenCaptureManager = MyScreenCaptureManager(this)
+            a01fPrefs = ViewModelProvider(this)[A01fPrefsModel::class.java]
+            a01fPrefs.initializePreferences(this)
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(this, sceneChanger)
+            rootComponent.setLiaisons(sceneChanger, a01fPrefs)
             setContent {
                 rootComponent.Content()
             }
@@ -62,10 +63,6 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScr
 
         try
         {
-            //mediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-            //val permissionIntent = mediaProjectionManager.createScreenCaptureIntent()
-            //startActivityForResult(permissionIntent, REQUEST_CODE_FOR_SCREEN_CAPTURE)
-
             if (allPermissionsGranted())
             {
                 checkMediaWritePermission()
@@ -100,6 +97,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScr
         }
     }
 
+/*
     override fun onResume()
     {
         super.onResume()
@@ -108,8 +106,8 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScr
     override fun onPause()
     {
         super.onPause()
-        //screenCaptureManager.release()
     }
+*/
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
     {
@@ -139,14 +137,6 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScr
         if (requestCode == REQUEST_CODE_OPEN_DOCUMENT_TREE)
         {
             accessPermission?.responseStorageAccessFrameworkLocation(resultCode, data)
-        }
-        if ((requestCode == REQUEST_CODE_FOR_SCREEN_CAPTURE)&&(resultCode == RESULT_OK)&&(data != null))
-        {
-            //if (::mediaProjectionManager.isInitialized)
-            //{
-                //screenCaptureManager.prepare(mediaProjectionManager.getMediaProjection(resultCode, data))
-                //takeScreenShot()
-            //}
         }
     }
 
@@ -310,35 +300,6 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScr
         }
     }
 
-    override fun takeScreenShot()
-    {
-        //val permissionIntent = mediaProjectionManager.createScreenCaptureIntent()
-        //startActivityForResult(permissionIntent, REQUEST_CODE_FOR_SCREEN_CAPTURE)
-    }
-
-    override fun startScreenCapture()
-    {
-        try
-        {
-            val thread = Thread {
-                try
-                {
-                    //screenCaptureManager.takeScreenShot()
-                    vibrate(IVibrator.VibratePattern.SIMPLE_MIDDLE)
-                }
-                catch (t: Throwable)
-                {
-                    t.printStackTrace()
-                }
-            }
-            thread.start()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-
     companion object
     {
         private val TAG = MainActivity::class.java.simpleName
@@ -346,7 +307,6 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver, IScr
         private const val REQUEST_CODE_PERMISSIONS = 10
         const val REQUEST_CODE_MEDIA_EDIT = 12
         const val REQUEST_CODE_OPEN_DOCUMENT_TREE = 20
-        const val REQUEST_CODE_FOR_SCREEN_CAPTURE = 30
 
         private val REQUIRED_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
