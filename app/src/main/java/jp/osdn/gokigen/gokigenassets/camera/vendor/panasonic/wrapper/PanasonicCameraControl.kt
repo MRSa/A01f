@@ -199,7 +199,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -211,7 +211,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
                 }
                 isStatusWatch = false
             }
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(isPowerOff)
             cameraConnection.stopWatchWifiStatus(context)
             stopLiveView()
         }

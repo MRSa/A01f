@@ -221,7 +221,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -233,7 +233,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
             {
                 liveViewControl.stopLiveView()
             }
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(isPowerOff)
             cameraConnection.stopWatchWifiStatus(context)
         }
         catch (e : Exception)

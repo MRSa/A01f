@@ -69,7 +69,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     override fun getConnectionMethod(): String { return ("EXAMPLE") }
     override fun connectToCamera() { }
     override fun startCamera(isPreviewView: Boolean, cameraSequence: Int) { }
-    override fun finishCamera() { }
+    override fun finishCamera(isPowerOff: Boolean) { }
     override fun changeCaptureMode(mode: String) { }
     override fun needRotateImage(): Boolean { return (false) }
     override fun captureButtonReceiver(id: Int): View.OnClickListener { return (this) }

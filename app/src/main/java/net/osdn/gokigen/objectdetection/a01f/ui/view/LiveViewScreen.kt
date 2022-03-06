@@ -7,19 +7,24 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
+import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import net.osdn.gokigen.objectdetection.a01f.R
 import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
 
+@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel: A01fPrefsModel, vibrator : IVibrator)
+fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel: A01fPrefsModel, vibrator : IVibrator, onTouchListener: LiveViewOnTouchListener)
 {
     var liveView0 : LiveImageView? = null
     var isGrid by remember { mutableStateOf(false) }
@@ -91,11 +96,23 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 liveView0 = liveView
                 cameraControl.setRefresher(0, liveView, liveView, liveView)
                 liveView.injectDisplay(cameraControl)
+                //liveView.setOnTouchListener(onTouchListener)
                 liveView.invalidate()
                 liveView.apply { }
             },
             update = { view ->
                 liveView0 = view
+            },
+            modifier = Modifier.pointerInteropFilter {
+                if (liveView0 == null)
+                {
+                    Log.v("LiveView", "liveView0 is null...")
+                    false
+                }
+                else
+                {
+                    onTouchListener.onTouch(liveView0, it)
+                }
             }
         )
     }

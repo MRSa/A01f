@@ -12,7 +12,7 @@ interface ICameraControl
 
     fun connectToCamera()
     fun startCamera(isPreviewView : Boolean = true, cameraSequence : Int = 0)
-    fun finishCamera()
+    fun finishCamera(isPowerOff: Boolean)
 
     fun changeCaptureMode(mode : String)
     fun needRotateImage() : Boolean

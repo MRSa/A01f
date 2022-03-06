@@ -14,7 +14,7 @@ class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.On
     override fun initialize() { }
     override fun connectToCamera() { }
     override fun startCamera(isPreviewView: Boolean, cameraSequence : Int) { }
-    override fun finishCamera() { }
+    override fun finishCamera(isPowerOff: Boolean) { }
     override fun changeCaptureMode(mode: String) { }
     override fun needRotateImage(): Boolean { return (false) }
     override fun setRefresher(id : Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider) { }

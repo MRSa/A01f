@@ -102,7 +102,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -111,7 +111,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
                 liveViewControl.stopLiveView()
             }
             statusChecker.stopStatusWatch()
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(isPowerOff)
             cameraConnection.stopWatchWifiStatus(context)
         }
         catch (e: Exception)

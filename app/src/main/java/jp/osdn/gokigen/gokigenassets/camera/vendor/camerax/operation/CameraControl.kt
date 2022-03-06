@@ -296,7 +296,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {

@@ -82,7 +82,7 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
     fun finish()
     {
         Log.v(TAG, " finishCamera() ")
-        cameraControl.finishCamera()
+        cameraControl.finishCamera(false)
     }
 
     fun getCameraControl() : ICameraControl { return (cameraControl) }

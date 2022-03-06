@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
+import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
 import net.osdn.gokigen.objectdetection.a01f.scene.SceneChanger
@@ -52,7 +53,7 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
 {
     GokigenComposeAppsTheme {
         NavHost(navController = navController, startDestination = "LiveViewScreen") {
-            composable("LiveViewScreen") { LiveViewScreen(navController = navController, cameraControl, prefsModel, vibrator) }
+            composable("LiveViewScreen") { LiveViewScreen(navController = navController, cameraControl, prefsModel, vibrator, LiveViewOnTouchListener(cameraControl)) }
             composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel, vibrator) }
         }
     }

@@ -122,7 +122,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -131,7 +131,7 @@ class ThetaCameraControl(private val context: AppCompatActivity, private val vib
                 statusWatcher.stopStatusWatch()
                 isStatusWatch = false
             }
-            cameraConnection.disconnect(false)
+            cameraConnection.disconnect(isPowerOff)
             cameraConnection.stopWatchWifiStatus(context)
         }
         catch (e : Exception)

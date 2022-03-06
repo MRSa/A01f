@@ -87,14 +87,13 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
             liveViewControl.stopLiveView()
             statusChecker.stopStatusWatch()
-            cameraConnection.disconnect(true)
-
+            cameraConnection.disconnect(isPowerOff)
         }
         catch (e: Exception)
         {

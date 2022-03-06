@@ -136,7 +136,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
         }
     }
 
-    override fun finishCamera()
+    override fun finishCamera(isPowerOff: Boolean)
     {
         try
         {
@@ -145,7 +145,7 @@ class RicohPentaxCameraControl(private val context: AppCompatActivity, private v
                 statusChecker.stopStatusWatch()
                 isStatusWatch = false
             }
-            gr2Connection.disconnect(true)
+            gr2Connection.disconnect(isPowerOff)
             gr2Connection.stopWatchWifiStatus(context)
         }
         catch (e : Exception)
