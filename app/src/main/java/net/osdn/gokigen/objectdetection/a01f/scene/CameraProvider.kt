@@ -144,7 +144,7 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
         {
             return (cameraXControl0)
         }
-        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator, informationNotify, number)
+        cameraXControl0 = CameraControl(activity, cameraPreference, vibrator, informationNotify, statusReceiver, number)
         cameraXisCreated = true
         return (cameraXControl0)
     }

@@ -325,7 +325,7 @@ class CameraLiveViewListenerImpl(private val context: Context,  private val info
             val pos = (position * maxCachePics.toFloat()).toInt()
             //Log.v(TAG, " getImage (pos: $position : $pos)")
             val image : MyImageByteArray =
-            if (pos >= cachePics.size)
+            if ((cachePics.size > 0)&&(pos >= cachePics.size))
             {
                 cachePics[cachePics.size - 1]
             }

@@ -1,4 +1,5 @@
 package net.osdn.gokigen.objectdetection.a01f
+
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -6,7 +7,6 @@ import android.os.*
 import android.util.Log
 import android.view.KeyEvent
 import android.view.WindowManager
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
     private lateinit var rootComponent : ViewRootComponent
     private lateinit var a01fPrefs : A01fPrefsModel
 
-    private var connectionStatus : ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
+    //private var connectionStatus : ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -207,14 +207,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
     override fun onCameraDisconnected()
     {
         Log.v(TAG, " onCameraDisconnected() ")
-        try
-        {
-            updateConnectionIcon(ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED)
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
+        updateConnectionIcon(ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED)
     }
 
     override fun onCameraConnectError(msg: String?)
@@ -245,28 +238,9 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
     private fun updateConnectionIcon(connectionStatus : ICameraConnectionStatus.CameraConnectionStatus)
     {
         Log.v(TAG, " updateConnectionIcon() $connectionStatus")
-        this.connectionStatus = connectionStatus
         try
         {
-            runOnUiThread {
-                try
-                {
-                    val view : ImageButton = this.findViewById(R.id.button_connect)
-                    val iconId = when (connectionStatus)
-                    {
-                        ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED -> { R.drawable.ic_baseline_cloud_off_24 }
-                        ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN -> { R.drawable.ic_baseline_cloud_off_24 }
-                        ICameraConnectionStatus.CameraConnectionStatus.CONNECTING -> { R.drawable.ic_baseline_cloud_queue_24 }
-                        ICameraConnectionStatus.CameraConnectionStatus.CONNECTED -> { R.drawable.ic_baseline_cloud_done_24 }
-                    }
-                    view.setImageDrawable(ContextCompat.getDrawable(this, iconId))
-                    view.invalidate()
-                }
-                catch (e : Exception)
-                {
-                    e.printStackTrace()
-                }
-            }
+            a01fPrefs.setCameraConnectionStatus(connectionStatus)
         }
         catch (e: Exception)
         {

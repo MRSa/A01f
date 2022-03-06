@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
 import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CAMERA_X_PREVIEW_LAYOUT
+import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
@@ -30,7 +31,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val number : Int = 0) : ICameraControl, ICameraShutter
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0) : ICameraControl, ICameraShutter
 {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var liveViewListener : CameraLiveViewListenerImpl
@@ -114,6 +115,16 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         {
             // Liveview View
             startCameraForLiveView(cameraSelector)
+        }
+
+        try
+        {
+            statusReceiver.onStatusNotify(activity.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CONNECTED))
+            statusReceiver.onCameraConnected()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
         }
     }
 

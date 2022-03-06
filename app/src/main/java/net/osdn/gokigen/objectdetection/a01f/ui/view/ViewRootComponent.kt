@@ -52,7 +52,7 @@ fun NavigationMain(navController: NavHostController, cameraControl: ICameraContr
 {
     GokigenComposeAppsTheme {
         NavHost(navController = navController, startDestination = "LiveViewScreen") {
-            composable("LiveViewScreen") { LiveViewScreen(navController = navController, cameraControl, vibrator) }
+            composable("LiveViewScreen") { LiveViewScreen(navController = navController, cameraControl, prefsModel, vibrator) }
             composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel, vibrator) }
         }
     }

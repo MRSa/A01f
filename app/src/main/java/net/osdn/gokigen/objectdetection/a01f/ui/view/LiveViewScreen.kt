@@ -5,21 +5,25 @@ import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import net.osdn.gokigen.objectdetection.a01f.R
+import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
 
 @Composable
-fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, vibrator : IVibrator)
+fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel: A01fPrefsModel, vibrator : IVibrator)
 {
     var liveView0 : LiveImageView? = null
     var isGrid by remember { mutableStateOf(false) }
+    val connectionStatus = prefsModel.cameraConnectionStatus.observeAsState(initial = prefsModel.cameraConnectionStatus.value ?: ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN)
 
     Column()
     {
@@ -59,10 +63,13 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
             }
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 IconButton(onClick = { }, enabled = false) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_screenshot_24),
-                        contentDescription = "ScreenShot"
-                    )
+                    val iconId = when (connectionStatus.value) {
+                        ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED -> { R.drawable.ic_baseline_cloud_off_24 }
+                        ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN -> { R.drawable.ic_baseline_cloud_off_24 }
+                        ICameraConnectionStatus.CameraConnectionStatus.CONNECTING -> { R.drawable.ic_baseline_cloud_queue_24 }
+                        ICameraConnectionStatus.CameraConnectionStatus.CONNECTED -> { R.drawable.ic_baseline_cloud_done_24 }
+                    }
+                    Icon(painter = painterResource(id = iconId), contentDescription = "ConnectionStatus")
                 }
                 IconButton(onClick = {
                     vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_SHORT)

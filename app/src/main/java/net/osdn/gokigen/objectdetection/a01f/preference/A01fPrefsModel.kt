@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.preference.PreferenceManager
+import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 
 class A01fPrefsModel : ViewModel()
 {
@@ -13,10 +14,13 @@ class A01fPrefsModel : ViewModel()
     private val captureLiveViewImage : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val cameraConnectionMethodExpanded : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val cameraConnectionMethodIndex : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    private val connectionStatus : MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus> by lazy { MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus>() }
+
 
     val captureBothLvAndCamera: LiveData<Boolean> = captureLiveViewImage
     val isCameraConnectionMethodExpanded: LiveData<Boolean> = cameraConnectionMethodExpanded
     val cameraConnectionMethodSelectionIndex: LiveData<Int> = cameraConnectionMethodIndex
+    val cameraConnectionStatus: LiveData<ICameraConnectionStatus.CameraConnectionStatus> = connectionStatus
 
     fun initializePreferences(activity: AppCompatActivity)
     {
@@ -71,6 +75,12 @@ class A01fPrefsModel : ViewModel()
         {
             e.printStackTrace()
         }
+    }
+
+    fun setCameraConnectionStatus(value: ICameraConnectionStatus.CameraConnectionStatus)
+    {
+        connectionStatus.postValue(value)
+        //connectionStatus.value = value
     }
 
 }
