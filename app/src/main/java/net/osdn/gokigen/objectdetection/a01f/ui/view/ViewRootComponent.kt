@@ -14,15 +14,15 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
-import net.osdn.gokigen.objectdetection.a01f.scene.SceneChanger
+import net.osdn.gokigen.objectdetection.a01f.liaison.CameraLiaison
 import net.osdn.gokigen.objectdetection.a01f.ui.theme.GokigenComposeAppsTheme
 
 class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : AbstractComposeView(context, attrs, defStyleAttr)
 {
-    private lateinit var changeScene: SceneChanger
+    private lateinit var changeScene: CameraLiaison
     private lateinit var prefsModel : A01fPrefsModel
 
-    fun setLiaisons(changeScene: SceneChanger, prefsModel : A01fPrefsModel)
+    fun setLiaisons(changeScene: CameraLiaison, prefsModel : A01fPrefsModel)
     {
         this.changeScene = changeScene
         this.prefsModel = prefsModel

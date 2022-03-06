@@ -1,4 +1,4 @@
-package net.osdn.gokigen.objectdetection.a01f.scene
+package net.osdn.gokigen.objectdetection.a01f.liaison
 
 import android.graphics.Color
 import android.util.Log
@@ -13,7 +13,7 @@ import jp.osdn.gokigen.mangle.scene.CameraProvider
 import net.osdn.gokigen.objectdetection.a01f.R
 import net.osdn.gokigen.objectdetection.a01f.preference.IPreferencePropertyAccessor
 
-class SceneChanger(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)
+class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)
 {
     private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
     private lateinit var cameraControl: ICameraControl  // = cameraProvider.getCameraXControl()
@@ -104,6 +104,6 @@ class SceneChanger(private val activity: AppCompatActivity, private val informat
 
     companion object
     {
-        private val  TAG = SceneChanger::class.java.simpleName
+        private val  TAG = CameraLiaison::class.java.simpleName
     }
 }

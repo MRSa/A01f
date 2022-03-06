@@ -1,6 +1,7 @@
 package net.osdn.gokigen.objectdetection.a01f.preference
 
 import android.content.SharedPreferences
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +16,6 @@ class A01fPrefsModel : ViewModel()
     private val cameraConnectionMethodExpanded : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val cameraConnectionMethodIndex : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     private val connectionStatus : MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus> by lazy { MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus>() }
-
 
     val captureBothLvAndCamera: LiveData<Boolean> = captureLiveViewImage
     val isCameraConnectionMethodExpanded: LiveData<Boolean> = cameraConnectionMethodExpanded
@@ -81,6 +81,74 @@ class A01fPrefsModel : ViewModel()
     {
         connectionStatus.postValue(value)
         //connectionStatus.value = value
+    }
+
+    fun getObjectDetectionFileName() : String
+    {
+        if (::preference.isInitialized)
+        {
+            try
+            {
+                val modeFileString = preference.getString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE) ?: ""
+                return (modeFileString.substring(modeFileString.lastIndexOf("%2F") + "%2f".length))
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+        }
+        return ("")
+    }
+
+    fun setObjectDetectionFileModel(uri: Uri)
+    {
+        if (::preference.isInitialized)
+        {
+            try
+            {
+                val editor: SharedPreferences.Editor = preference.edit()
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE, uri.toString())
+                editor.apply()
+            }
+            catch (e: Exception)
+            {
+
+            }
+        }
+    }
+
+    fun getObjectDetectionLabelMapFileName() : String
+    {
+        if (::preference.isInitialized)
+        {
+            try
+            {
+                val modeFileString = preference.getString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE_DEFAULT_VALUE) ?: ""
+                return (modeFileString.substring(modeFileString.lastIndexOf("%2F") + "%2f".length))
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+        }
+        return ("")
+    }
+
+    fun setObjectDetectionLabelMapFileModel(uri: Uri)
+    {
+        if (::preference.isInitialized)
+        {
+            try
+            {
+                val editor: SharedPreferences.Editor = preference.edit()
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE, uri.toString())
+                editor.apply()
+            }
+            catch (e: Exception)
+            {
+
+            }
+        }
     }
 
 }

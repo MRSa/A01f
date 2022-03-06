@@ -1,6 +1,8 @@
 package net.osdn.gokigen.objectdetection.a01f.ui.view
 
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import kotlinx.coroutines.launch
@@ -24,9 +27,11 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsMode
 {
     val scope = rememberCoroutineScope()
     val captureBothLiveViewAndCamera = prefsModel.captureBothLvAndCamera.observeAsState(initial = prefsModel.captureBothLvAndCamera.value ?: false)
+    val padding = 2.dp
 
     MaterialTheme {
         Column {
+            Spacer(Modifier.size(padding))
             SharedPrefsToggle(
                 text = stringResource(R.string.pref_capture_both_camera_and_live_view),
                 value = captureBothLiveViewAndCamera.value,
@@ -36,7 +41,19 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsMode
                     }
                 }
             )
+            Spacer(Modifier.size(padding))
+            Divider(color = Color.LightGray, thickness = 1.dp)
+            Spacer(Modifier.size(padding))
+            FilePickerForObjectDetectionModel(prefsModel)
+            Spacer(Modifier.size(padding))
+            FilePickerForObjectLabelMapFile(prefsModel)
+            Spacer(Modifier.size(padding))
+            Divider(color = Color.LightGray, thickness = 1.dp)
+            Spacer(Modifier.size(padding))
             CameraConnectionMethodDropdown(prefsModel, vibrator)
+            Spacer(Modifier.size(padding))
+            Divider(color = Color.LightGray, thickness = 1.dp)
+            Spacer(Modifier.size(padding))
         }
     }
 }
@@ -93,5 +110,46 @@ fun CameraConnectionMethodDropdown(prefsModel: A01fPrefsModel, vibrator : IVibra
                 }
             }
         }
+    }
+}
+
+@Composable
+fun FilePickerForObjectDetectionModel(prefsModel: A01fPrefsModel)
+{
+    val scope = rememberCoroutineScope()
+
+    val filePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { modelUri ->
+        if (modelUri != null)
+        {
+            Log.v("File Pick", "Picked file URI: $modelUri")
+            scope.launch {
+                prefsModel.setObjectDetectionFileModel(modelUri)
+            }
+        }
+    }
+
+    Row (verticalAlignment = Alignment.CenterVertically) {
+        Text(" " + stringResource(id = R.string.pref_for_object_detection_model_file) + " " + prefsModel.getObjectDetectionFileName(), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") })
+    }
+}
+
+
+@Composable
+fun FilePickerForObjectLabelMapFile(prefsModel: A01fPrefsModel)
+{
+    val scope = rememberCoroutineScope()
+
+    val filePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { modelUri ->
+        if (modelUri != null)
+        {
+            Log.v("File Pick", "Picked file URI(LABEL MAP): $modelUri")
+            scope.launch {
+                prefsModel.setObjectDetectionLabelMapFileModel(modelUri)
+            }
+        }
+    }
+
+    Row (verticalAlignment = Alignment.CenterVertically) {
+        Text(" " + stringResource(id = R.string.pref_for_object_detection_label_map_file) + " " + prefsModel.getObjectDetectionLabelMapFileName(), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") })
     }
 }

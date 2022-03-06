@@ -20,18 +20,16 @@ import jp.osdn.gokigen.gokigenassets.scene.ShowMessage
 import jp.osdn.gokigen.gokigenassets.utils.IScopedStorageAccessPermission
 import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
 import net.osdn.gokigen.objectdetection.a01f.preference.PreferenceValueInitializer
-import net.osdn.gokigen.objectdetection.a01f.scene.SceneChanger
+import net.osdn.gokigen.objectdetection.a01f.liaison.CameraLiaison
 import net.osdn.gokigen.objectdetection.a01f.ui.view.ViewRootComponent
 
 class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 {
     private val accessPermission : IScopedStorageAccessPermission? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { StorageOperationWithPermission(this) } else { null }
     private val showMessage : ShowMessage = ShowMessage(this)
-    private lateinit var sceneChanger : SceneChanger
+    private lateinit var cameraLiaison : CameraLiaison
     private lateinit var rootComponent : ViewRootComponent
     private lateinit var a01fPrefs : A01fPrefsModel
-
-    //private var connectionStatus : ICameraConnectionStatus.CameraConnectionStatus = ICameraConnectionStatus.CameraConnectionStatus.UNKNOWN
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -40,14 +38,14 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
         try
         {
             ///////// INITIALIZATION /////////
-            sceneChanger  = SceneChanger(this, showMessage, this, this)
+            cameraLiaison  = CameraLiaison(this, showMessage, this, this)
             PreferenceValueInitializer().initializePreferences(this)
             a01fPrefs = ViewModelProvider(this)[A01fPrefsModel::class.java]
             a01fPrefs.initializePreferences(this)
 
             ///////// SET ROOT VIEW /////////
             rootComponent = ViewRootComponent(applicationContext)
-            rootComponent.setLiaisons(sceneChanger, a01fPrefs)
+            rootComponent.setLiaisons(cameraLiaison, a01fPrefs)
             setContent {
                 rootComponent.Content()
             }
@@ -66,7 +64,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
             if (allPermissionsGranted())
             {
                 checkMediaWritePermission()
-                sceneChanger.initialize()
+                cameraLiaison.initialize()
             }
             else
             {
@@ -82,7 +80,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
     override fun onDestroy()
     {
         super.onDestroy()
-        sceneChanger.finish()
+        cameraLiaison.finish()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -117,7 +115,7 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
             if (allPermissionsGranted())
             {
                 checkMediaWritePermission()
-                sceneChanger.initialize()
+                cameraLiaison.initialize()
             }
             else
             {
@@ -222,9 +220,9 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
             if (event.action == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_CAMERA))
             {
                 Log.v(TAG, "onKeyDown() $keyCode")
-                if (::sceneChanger.isInitialized)
+                if (::cameraLiaison.isInitialized)
                 {
-                    return (sceneChanger.handleKeyDown(keyCode, event))
+                    return (cameraLiaison.handleKeyDown(keyCode, event))
                 }
             }
         }

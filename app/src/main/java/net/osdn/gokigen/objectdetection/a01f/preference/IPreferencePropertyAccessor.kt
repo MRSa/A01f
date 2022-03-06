@@ -69,6 +69,12 @@ interface IPreferencePropertyAccessor
         const val PREFERENCE_CAMERA_METHOD_INDEX = "camera_method"
         const val PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE = "3"
 
+        // --- PREFERENCE FOR OBJECT DETECTION MODEL FILE
+        const val PREFERENCE_OBJECT_DETECTION_MODEL_FILE  = "object_detection_model_file"
+        const val PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE  = ""
+        const val PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE  = "object_detection_label_map_file"
+        const val PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE_DEFAULT_VALUE  = ""
+
         // --- CAMERA 1  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_1 = "camera_method1"
         const val PREFERENCE_CAMERA_METHOD_1_DEFAULT_VALUE = "camerax"

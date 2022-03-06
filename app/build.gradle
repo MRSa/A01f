@@ -80,4 +80,7 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:$navigation_version"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+
+    //implementation "org.tensorflow:tensorflow-lite:2.3.0"
+    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.3.0'
 }
