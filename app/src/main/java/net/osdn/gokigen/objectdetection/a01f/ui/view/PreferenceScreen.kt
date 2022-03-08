@@ -1,5 +1,7 @@
 package net.osdn.gokigen.objectdetection.a01f.ui.view
 
+import android.content.Intent
+import android.content.Intent.ACTION_OPEN_DOCUMENT
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +23,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import kotlinx.coroutines.launch
 import net.osdn.gokigen.objectdetection.a01f.R
 import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
+import net.osdn.gokigen.objectdetection.a01f.preference.GetPickFilePermission
 
 @Composable
 fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsModel, vibrator : IVibrator)
@@ -118,7 +121,8 @@ fun FilePickerForObjectDetectionModel(prefsModel: A01fPrefsModel)
 {
     val scope = rememberCoroutineScope()
 
-    val filePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { modelUri ->
+    //val filePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { modelUri ->
+    val filePickerLauncher = rememberLauncherForActivityResult(GetPickFilePermission()) { modelUri ->
         if (modelUri != null)
         {
             Log.v("File Pick", "Picked file URI: $modelUri")

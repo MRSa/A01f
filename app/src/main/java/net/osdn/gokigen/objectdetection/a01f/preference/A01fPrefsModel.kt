@@ -1,5 +1,7 @@
 package net.osdn.gokigen.objectdetection.a01f.preference
 
+import android.content.ContentResolver
+import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +14,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 class A01fPrefsModel : ViewModel()
 {
     private lateinit var preference : SharedPreferences
+    private lateinit var contentResolver: ContentResolver
     private val captureLiveViewImage : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val cameraConnectionMethodExpanded : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val cameraConnectionMethodIndex : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
@@ -26,6 +29,7 @@ class A01fPrefsModel : ViewModel()
     {
         try
         {
+            contentResolver = activity.contentResolver
             preference = PreferenceManager.getDefaultSharedPreferences(activity)
             captureLiveViewImage.value = preference.getBoolean(
                 IPreferencePropertyAccessor.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW,
@@ -106,13 +110,22 @@ class A01fPrefsModel : ViewModel()
         {
             try
             {
+                contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+
+            try
+            {
                 val editor: SharedPreferences.Editor = preference.edit()
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE, uri.toString())
                 editor.apply()
             }
             catch (e: Exception)
             {
-
+                e.printStackTrace()
             }
         }
     }

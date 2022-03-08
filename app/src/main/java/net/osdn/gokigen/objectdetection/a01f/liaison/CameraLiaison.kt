@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
@@ -12,9 +13,11 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.mangle.scene.CameraProvider
 import net.osdn.gokigen.objectdetection.a01f.R
 import net.osdn.gokigen.objectdetection.a01f.preference.IPreferencePropertyAccessor
+import net.osdn.gokigen.objectdetection.a01f.tflite.ObjectDetectionModelReader
 
 class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)
 {
+    private val objectDetectionModel = ObjectDetectionModelReader(activity.contentResolver, 5)
     private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
     private lateinit var cameraControl: ICameraControl  // = cameraProvider.getCameraXControl()
 
@@ -54,6 +57,21 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
 
     fun initialize()
     {
+        try
+        {
+            val preference = PreferenceManager.getDefaultSharedPreferences(activity)
+            val modelUri = (preference.getString(
+                IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE,
+                IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE) ?: "").toUri()
+            if (!objectDetectionModel.readObjectModel(activity, modelUri))
+            {
+                Log.v(TAG, " -=-=-=-=-=-=-=-=-=-=-=-=- Object Detection Model Read Failure... $modelUri  -=-=-=-=-=-=-=-=-=-=-=-=- ")
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
         try
         {
             val msg = activity.getString(R.string.app_name)
