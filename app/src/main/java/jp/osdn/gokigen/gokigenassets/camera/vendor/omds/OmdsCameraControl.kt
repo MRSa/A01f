@@ -29,9 +29,8 @@ import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
-class OmdsCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IDisplayInjector, IOmdsProtocolNotify
+class OmdsCameraControl(private val context: AppCompatActivity, private val vibrator: IVibrator, informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val number : Int = 0,  private val liveViewListener: CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify)) : ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown, IDisplayInjector, IOmdsProtocolNotify
 {
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val statusChecker = OmdsCameraStatusWatcher()
     private val runModeControl = OmdsRunModeControl()
     private val zoomLensControl = OmdsZoomLensControl(statusChecker)

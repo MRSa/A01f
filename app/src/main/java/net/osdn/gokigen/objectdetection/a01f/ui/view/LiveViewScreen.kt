@@ -2,6 +2,7 @@ package net.osdn.gokigen.objectdetection.a01f.ui.view
 
 import android.graphics.Color
 import android.util.Log
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -9,6 +10,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
@@ -113,6 +115,14 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 {
                     onTouchListener.onTouch(liveView0, it)
                 }
+            }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = { cameraControl.onLongClickReceiver(0).onLongClick(null) /* Called on Long Press */ },
+                    //onPress = { /* Called when the gesture starts */ },
+                    //onDoubleTap = { /* Called on Double Tap */ },
+                    //onTap = { /* Called on Tap */ }
+                )
             }
         )
     }

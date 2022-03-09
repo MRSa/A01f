@@ -38,11 +38,10 @@ import org.json.JSONObject
 import kotlin.collections.ArrayList
 
 
-class SonyCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int = 0) : ISonyCameraHolder,
+class SonyCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify : IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int = 0, private val liveViewListener :CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify)) : ISonyCameraHolder,
     IDisplayInjector, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val sonyCameraStatus = SonyStatus(JSONObject())
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val cameraConnection = SonyCameraConnection(context, provider, this, cameraCoordinator, number)
     private val storeImage = StoreImage(context, liveViewListener)
 

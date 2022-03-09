@@ -62,7 +62,7 @@ class ObjectDetectionModelReader(private val contentResolver: ContentResolver, p
                 objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
                 //objectDetector = ObjectDetector.createFromBufferAndOptions(ByteBuffer.wrap(data), options)
             }
-            Log.v(TAG, " ObjectDetector is Ready!")
+            Log.v(TAG, " ----- ObjectDetector is Ready! -----")
             return (true)
         }
         catch (e: Exception)

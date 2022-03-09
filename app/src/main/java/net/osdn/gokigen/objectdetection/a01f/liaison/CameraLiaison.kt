@@ -10,7 +10,6 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
-import jp.osdn.gokigen.mangle.scene.CameraProvider
 import net.osdn.gokigen.objectdetection.a01f.R
 import net.osdn.gokigen.objectdetection.a01f.preference.IPreferencePropertyAccessor
 import net.osdn.gokigen.objectdetection.a01f.tflite.ObjectDetectionModelReader

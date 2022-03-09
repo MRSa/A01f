@@ -25,9 +25,8 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.io.InputStream
 
-class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, private val number : Int = 0) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, ICameraStatus
+class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, private val number : Int = 0, private val liveViewListener :CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify, isDisableCache = true)) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, ICameraStatus
 {
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify, isDisableCache = true)
     private lateinit var refresher : ILiveViewRefresher
 
     private var startForResult : ActivityResultLauncher<Intent> = context.registerForActivityResult(StartActivityForResult()) { result : ActivityResult ->
@@ -39,6 +38,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
                         val uri = result.data?.data
                         if (uri != null)
                         {
+                            context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                             applyPictureFile(uri, isStoreUri = true)
                         }
                     }
@@ -58,6 +58,8 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
         //val intent = Intent(Intent.ACTION_PICK)
         //val intent = Intent(Intent.ACTION_GET_CONTENT)
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "image/*"
         startForResult.launch(intent)
     }
@@ -96,6 +98,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     {
         try
         {
+            Log.v(TAG, "setRefresher() : ${preference.getCameraOption1()}")
             this.refresher = refresher
             liveViewListener.setRefresher(refresher)
             imageView.setImageProvider(liveViewListener)
@@ -104,6 +107,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
             val option1 = preference.getCameraOption1()
             if ((option1.isNotEmpty())&&(option1.contains("content://")))
             {
+                Log.v(TAG, " setRefresher() : $option1 ")
                 applyPictureFile(Uri.parse(option1))
             }
         }
@@ -155,6 +159,7 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
                     {
                         preference.getUpdater()?.setCameraOption1(uri.toString())
                         vibrator.vibrate(IVibrator.VibratePattern.SIMPLE_LONG)
+                        Log.v(TAG, " ----- STORE PREFERENCE : ${uri.toString()}")
                     }
                     liveViewListener.onUpdateLiveView(fis.readBytes(), null, degrees)
                     if (::refresher.isInitialized)

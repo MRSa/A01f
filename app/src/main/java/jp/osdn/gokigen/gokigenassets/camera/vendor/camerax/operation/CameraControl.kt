@@ -31,10 +31,9 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0) : ICameraControl, ICameraShutter
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener:CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(activity, informationReceiver)) : ICameraControl, ICameraShutter
 {
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var liveViewListener : CameraLiveViewListenerImpl
     private lateinit var fileControl : FileControl
     private lateinit var storeImage : StoreImage
     private lateinit var cameraXCamera : Camera
@@ -53,7 +52,6 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     override fun initialize()
     {
         Log.v(TAG, " initialize()")
-        liveViewListener = CameraLiveViewListenerImpl(activity, informationReceiver)
         cameraExecutor = Executors.newSingleThreadExecutor()
         storeImage = StoreImage(activity, liveViewListener)
         clickKeyDownListeners.clear()
@@ -350,7 +348,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
         return (number)
     }
 
-    override fun getCameraShutter(id: Int): ICameraShutter? { return (this) }
+    override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
 
     private fun getClickKeyDownListener(id : Int) : CameraClickKeyDownListener
     {

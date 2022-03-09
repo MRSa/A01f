@@ -33,10 +33,9 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number: Int) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
+class PanasonicCameraControl(private val context: AppCompatActivity, private val vibrator : IVibrator, private val informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, provider: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number: Int = 0, private val liveViewListener: CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify)) : IPanasonicCameraHolder, IDisplayInjector,ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICameraShutter, IKeyDown
 {
     private val cardSlotSelector = PanasonicCardSlotSelector()
-    private val liveViewListener = CameraLiveViewListenerImpl(context, informationNotify)
     private val cameraConnection: PanasonicCameraConnection = PanasonicCameraConnection(context, provider, this, this, cardSlotSelector, cameraCoordinator, number)
     private val storeImage = StoreImage(context, liveViewListener)
 
