@@ -35,6 +35,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         private val TAG = LiveImageView::class.java.simpleName
     }
 
+    private val dummyRect = RectF(0.0f, 0.0f, 1.0f, 1.0f)
     private lateinit var orientationEventListener : CameraOrientationEventReceiver
     private var sliderPosition : Float = 0.0f
     private var imageRotationDegrees : Int = 0
@@ -130,7 +131,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         if (anotherDrawer != null)
         {
             // 別の描画ロジックを使う場合...
-            anotherDrawer?.onDraw(canvas)
+            anotherDrawer?.onDraw(canvas, dummyRect,0)
             return
         }
         if (!(::imageProvider.isInitialized))
@@ -170,7 +171,7 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         if (overwriteDrawer != null)
         {
             // 画面の上にデータを載せる場合...
-            overwriteDrawer?.onDraw(canvas)
+            overwriteDrawer?.onDraw(canvas, imageRectF, addDegrees)
             return
         }
     }

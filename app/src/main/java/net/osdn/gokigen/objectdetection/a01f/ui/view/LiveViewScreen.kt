@@ -17,6 +17,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
+import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.LiveImageView
 import jp.osdn.gokigen.gokigenassets.liveview.LiveViewOnTouchListener
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
@@ -26,7 +27,7 @@ import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
 @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel: A01fPrefsModel, vibrator : IVibrator, onTouchListener: LiveViewOnTouchListener)
+fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel: A01fPrefsModel, vibrator : IVibrator, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?)
 {
     var liveView0 : LiveImageView? = null
     var isGrid by remember { mutableStateOf(false) }
@@ -97,6 +98,7 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 val liveView = LiveImageView(context)
                 liveView0 = liveView
                 cameraControl.setRefresher(0, liveView, liveView, liveView)
+                liveView.setAnotherDrawer(null, anotherDrawer)
                 liveView.injectDisplay(cameraControl)
                 //liveView.setOnTouchListener(onTouchListener)
                 liveView.invalidate()

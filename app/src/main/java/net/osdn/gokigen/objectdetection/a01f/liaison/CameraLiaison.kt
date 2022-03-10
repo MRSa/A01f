@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
+import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import net.osdn.gokigen.objectdetection.a01f.R
@@ -16,7 +17,7 @@ import net.osdn.gokigen.objectdetection.a01f.tflite.ObjectDetectionModelReader
 
 class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)
 {
-    private val objectDetectionModel = ObjectDetectionModelReader(activity.contentResolver, 5)
+    private val objectDetectionModel = ObjectDetectionModelReader(activity.contentResolver, 10)
     private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
     private lateinit var cameraControl: ICameraControl  // = cameraProvider.getCameraXControl()
 
@@ -46,6 +47,8 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
                 e.printStackTrace()
                 cameraProvider.getCameraXControl()
             }
+            cameraProvider.setRefresher(objectDetectionModel)
+            objectDetectionModel.setImageProvider(cameraProvider.getImageProvider())
             cameraControl.initialize()
         }
         catch (e: Exception)
@@ -104,6 +107,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
 
     fun getCameraControl() : ICameraControl { return (cameraControl) }
     fun getVibrator() : IVibrator { return (vibrator) }
+    fun getAnotherDrawer() : IAnotherDrawer { return (objectDetectionModel) }
 
     fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
     {

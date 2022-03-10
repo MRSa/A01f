@@ -319,7 +319,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     }
 */
 
-    override fun onDraw(canvas: Canvas?)
+    override fun onDraw(canvas: Canvas?, imageRectF: RectF, rotationDegrees: Int)
     {
         if (canvas == null)
         {

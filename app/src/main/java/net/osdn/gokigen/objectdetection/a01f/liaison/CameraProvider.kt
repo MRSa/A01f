@@ -26,7 +26,9 @@ import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companio
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PIXPRO
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_SONY
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_THETA
+import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
+import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
@@ -52,6 +54,16 @@ class CameraProvider(private val activity: AppCompatActivity, private val inform
     private val cameraCoordinator = CameraControlCoordinator(informationNotify)
     private var cameraXisCreated = false
     private lateinit var cameraXControl0: ICameraControl
+
+    fun setRefresher(refresher: ILiveViewRefresher)
+    {
+        liveViewListener.setRefresher(refresher = refresher)
+    }
+
+    fun getImageProvider() : IImageProvider
+    {
+        return (liveViewListener)
+    }
 
     fun decideCameraControl(connectionMethod : String, number : Int) : ICameraControl
     {
