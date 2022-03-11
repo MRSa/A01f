@@ -1,6 +1,5 @@
 package net.osdn.gokigen.objectdetection.a01f.tflite
 
-import android.content.ContentResolver
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -8,6 +7,8 @@ import android.graphics.RectF
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_PT
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
@@ -21,40 +22,20 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
 
-class ObjectDetectionModelReader(private val contentResolver: ContentResolver, private val max_detect_objects: Int) : IAnotherDrawer, ILiveViewRefresher
+class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val max_detect_objects: Int = 10, private val confidence_level: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
 {
+    private val contentResolver = activity.contentResolver
     private lateinit var objectDetector: ObjectDetector
     private lateinit var imageProvider: IImageProvider
 
     private lateinit var detectResults: MutableList<Detection>
     private lateinit var targetRectF : RectF
 
-    fun readObjectModel(context: AppCompatActivity, uri: Uri) : Boolean
+    fun readObjectModel(uri: Uri) : Boolean
     {
-/*
         try
         {
-            val openRequestIntent = Intent(ACTION_OPEN_DOCUMENT)
-            openRequestIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            openRequestIntent.addCategory(Intent.CATEGORY_OPENABLE)
-            openRequestIntent.type = "* / *"
-            openRequestIntent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri)
-            context.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { data ->
-                val targetUri = data.data?.data
-                if (targetUri != null)
-                {
-                    contentResolver.takePersistableUriPermission(targetUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                }
-            }.launch(openRequestIntent)
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-*/
-        try
-        {
-            Log.v(TAG, " Request URI : $uri")
+            Log.v(TAG, " Requested URI : $uri")
 
             var size = 0
             val cursor = contentResolver.query(uri, arrayOf(MediaStore.MediaColumns.SIZE), null, null, null)
@@ -90,38 +71,6 @@ class ObjectDetectionModelReader(private val contentResolver: ContentResolver, p
         this.imageProvider = imageProvider
     }
 
-    fun readObjectModelKeep(context: AppCompatActivity, uri: Uri) : Boolean
-    {
-        var path = ""
-        try
-        {
-            val cursor = contentResolver.query(uri, arrayOf(MediaStore.MediaColumns.DATA), null, null, null)
-            if (cursor != null)
-            {
-                cursor.moveToFirst()
-                path = cursor.getString(0)
-                cursor.close()
-            }
-            if (path.isNotEmpty())
-            {
-
-                //val modelFile = File(path)
-                val options: ObjectDetectorOptions = ObjectDetectorOptions.builder().setMaxResults(max_detect_objects).build()
-                objectDetector = ObjectDetector.createFromFileAndOptions(context, path, options)
-                return (true)
-            }
-            else
-            {
-                Log.v(TAG, " Read Failure : Object Detection Model.")
-            }
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        return (false)
-    }
-
     override fun onDraw(canvas: Canvas?, imageRectF: RectF, rotationDegrees: Int)
     {
         try
@@ -130,12 +79,18 @@ class ObjectDetectionModelReader(private val contentResolver: ContentResolver, p
             {
                 Log.v(TAG, "onDraw...")
 
-                val paint = Paint()
-                paint.color = Color.GREEN
-                paint.strokeWidth = 5.0f
-                paint.style = Paint.Style.STROKE
-                paint.isAntiAlias = true
-                paint.textSize = 38.0f
+                val paintText = Paint()
+                paintText.strokeWidth = 1.0f
+                paintText.style = Paint.Style.FILL
+                paintText.isAntiAlias = true
+                paintText.textSize = TypedValue.applyDimension(COMPLEX_UNIT_PT, 9.0f, activity.resources.displayMetrics)
+                paintText.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK)
+
+                val paintRect = Paint()
+                paintRect.strokeWidth = 3.0f
+                paintRect.style = Paint.Style.STROKE
+                paintRect.isAntiAlias = true
+                paintRect.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK)
 
                 val posWidth = abs(imageRectF.right - imageRectF.left) / abs(targetRectF.right - targetRectF.left)
                 val posHeight = abs(imageRectF.bottom - imageRectF.top) / abs(targetRectF.bottom - targetRectF.top)
@@ -143,41 +98,59 @@ class ObjectDetectionModelReader(private val contentResolver: ContentResolver, p
                 val centerX = canvas.width / 2
                 val centerY = canvas.height / 2
 
-                if (rotationDegrees != 0)
-                {
-                    canvas.rotate(rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
-                }
 
                 var count = 1
                 for (r in detectResults)
                 {
-                    Log.v(TAG, "[$count](${r.boundingBox}) : ${r.categories[0].label} : ${r.categories[0].score}")
-                    if (r.categories[0].score > 0.5)
+                    //Log.v(TAG, "[$count](${r.boundingBox}) : ${r.categories[0].label} : ${r.categories[0].score}")
+                    if (r.categories[0].score > confidence_level)
                     {
-                        canvas.drawText(
-                            r.categories[0].label,
-                            r.boundingBox.centerX() * posWidth + imageRectF.left,
-                            r.boundingBox.centerY() * posHeight + imageRectF.top,
-                            paint
-                        )
-                        canvas.drawRoundRect(
-                            r.boundingBox.left * posWidth + imageRectF.left,
-                            r.boundingBox.top * posHeight + imageRectF.top,
-                            r.boundingBox.right * posWidth + imageRectF.left,
-                            r.boundingBox.bottom * posHeight + imageRectF.top,
-                            0.5f,
-                            0.5f,
-                            paint
-                        )
+                        val drawText = String.format("%s %2.1f%%",r.categories[0].label, + (r.categories[0].score) * 100.0f)
+                        paintRect.color = decideColor(count)
+                        paintText.color = decideColor(count)
+                        if (rotationDegrees != 0)
+                        {
+                            canvas.drawText(
+                                drawText,
+                                r.boundingBox.centerY() * posWidth + imageRectF.left,
+                                r.boundingBox.centerX() * posHeight + imageRectF.top,
+                                paintText
+                            )
+
+                            canvas.rotate(rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+                            canvas.drawRoundRect(
+                                r.boundingBox.left * posWidth + imageRectF.left,
+                                r.boundingBox.top * posHeight + imageRectF.top,
+                                r.boundingBox.right * posWidth + imageRectF.left,
+                                r.boundingBox.bottom * posHeight + imageRectF.top,
+                                0.5f,
+                                0.5f,
+                                paintRect
+                            )
+                            canvas.rotate(-rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+                        }
+                        else
+                        {
+                            canvas.drawText(
+                                drawText,
+                                r.boundingBox.centerX() * posWidth + imageRectF.left,
+                                r.boundingBox.centerY() * posHeight + imageRectF.top,
+                                paintText
+                            )
+                            canvas.drawRoundRect(
+                                r.boundingBox.left * posWidth + imageRectF.left,
+                                r.boundingBox.top * posHeight + imageRectF.top,
+                                r.boundingBox.right * posWidth + imageRectF.left,
+                                r.boundingBox.bottom * posHeight + imageRectF.top,
+                                0.5f,
+                                0.5f,
+                                paintRect
+                            )
+                        }
+                        count++
                     }
-                    count++
                 }
-
-                if (rotationDegrees != 0)
-                {
-                    canvas.rotate(-rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
-                }
-
+                Log.v(TAG, " ----- DETECTED OBJECT : $count")
             }
         }
         catch (e: Throwable)
@@ -186,15 +159,28 @@ class ObjectDetectionModelReader(private val contentResolver: ContentResolver, p
         }
     }
 
+    private fun decideColor(index: Int) : Int
+    {
+        val choice = index % 4
+        return (when (choice)
+        {
+            0 -> Color.BLUE
+            1 -> Color.GREEN
+            2 -> Color.MAGENTA
+            3 -> Color.CYAN
+            else -> Color.WHITE
+        })
+    }
+
     override fun refresh()
     {
         try
         {
             val bitmap = imageProvider.getImage()
             targetRectF = RectF(0.0f, 0.0f, (bitmap.width).toFloat(), (bitmap.height).toFloat())
-            Log.v(TAG, " Object Detection (${targetRectF})")
+            Log.v(TAG, " - - - - - - - - - Object Detection (${targetRectF})")
             detectResults = objectDetector.detect(TensorImage.fromBitmap(bitmap))
-            Log.v(TAG, " Object Detection (results: ${detectResults.size})")
+            Log.v(TAG, " - - - - - - - - - Object Detection (results: ${detectResults.size})")
         }
         catch (e: Throwable)
         {

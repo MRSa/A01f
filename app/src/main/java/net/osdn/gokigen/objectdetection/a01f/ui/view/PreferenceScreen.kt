@@ -1,10 +1,7 @@
 package net.osdn.gokigen.objectdetection.a01f.ui.view
 
-import android.content.Intent
-import android.content.Intent.ACTION_OPEN_DOCUMENT
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -48,8 +45,6 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsMode
             Divider(color = Color.LightGray, thickness = 1.dp)
             Spacer(Modifier.size(padding))
             FilePickerForObjectDetectionModel(prefsModel)
-            Spacer(Modifier.size(padding))
-            FilePickerForObjectLabelMapFile(prefsModel)
             Spacer(Modifier.size(padding))
             Divider(color = Color.LightGray, thickness = 1.dp)
             Spacer(Modifier.size(padding))
@@ -134,26 +129,5 @@ fun FilePickerForObjectDetectionModel(prefsModel: A01fPrefsModel)
 
     Row (verticalAlignment = Alignment.CenterVertically) {
         Text(" " + stringResource(id = R.string.pref_for_object_detection_model_file) + " " + prefsModel.getObjectDetectionFileName(), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") })
-    }
-}
-
-
-@Composable
-fun FilePickerForObjectLabelMapFile(prefsModel: A01fPrefsModel)
-{
-    val scope = rememberCoroutineScope()
-
-    val filePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { modelUri ->
-        if (modelUri != null)
-        {
-            Log.v("File Pick", "Picked file URI(LABEL MAP): $modelUri")
-            scope.launch {
-                prefsModel.setObjectDetectionLabelMapFileModel(modelUri)
-            }
-        }
-    }
-
-    Row (verticalAlignment = Alignment.CenterVertically) {
-        Text(" " + stringResource(id = R.string.pref_for_object_detection_label_map_file) + " " + prefsModel.getObjectDetectionLabelMapFileName(), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") })
     }
 }

@@ -381,11 +381,6 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE)
             }
 
-            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE))
-            {
-                editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE_DEFAULT_VALUE)
-            }
-
             editor.apply()
         }
         catch (e : Exception)

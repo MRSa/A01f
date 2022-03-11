@@ -3,9 +3,7 @@
 
     <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
     <string-array name="connection_method">
-        <item>None</item>
-        <item>Console Panel</item>
-        <item>Show Example</item>
+        <item>Selected Picture</item>
         <item>Internal Camera</item>
         <item>Ricoh GR / PENTAX</item>
         <item>Ricoh Theta(OSC)</item>
@@ -22,8 +20,6 @@
 
     <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
     <string-array name="connection_method_value">
-        <item>NONE</item>
-        <item>CONSOLE</item>
         <item>EXAMPLE</item>
         <item>camerax</item>
         <item>RICOH</item>

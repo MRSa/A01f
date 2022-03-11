@@ -129,39 +129,4 @@ class A01fPrefsModel : ViewModel()
             }
         }
     }
-
-    fun getObjectDetectionLabelMapFileName() : String
-    {
-        if (::preference.isInitialized)
-        {
-            try
-            {
-                val modeFileString = preference.getString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE_DEFAULT_VALUE) ?: ""
-                return (modeFileString.substring(modeFileString.lastIndexOf("%2F") + "%2f".length))
-            }
-            catch (e: Exception)
-            {
-                e.printStackTrace()
-            }
-        }
-        return ("")
-    }
-
-    fun setObjectDetectionLabelMapFileModel(uri: Uri)
-    {
-        if (::preference.isInitialized)
-        {
-            try
-            {
-                val editor: SharedPreferences.Editor = preference.edit()
-                editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_LABEL_MAP_FILE, uri.toString())
-                editor.apply()
-            }
-            catch (e: Exception)
-            {
-
-            }
-        }
-    }
-
 }

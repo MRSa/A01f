@@ -17,7 +17,7 @@ import net.osdn.gokigen.objectdetection.a01f.tflite.ObjectDetectionModelReader
 
 class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)
 {
-    private val objectDetectionModel = ObjectDetectionModelReader(activity.contentResolver, 10)
+    private val objectDetectionModel = ObjectDetectionModelReader(activity, 10, 0.5f)
     private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
     private lateinit var cameraControl: ICameraControl  // = cameraProvider.getCameraXControl()
 
@@ -65,7 +65,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
             val modelUri = (preference.getString(
                 IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE,
                 IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE) ?: "").toUri()
-            if (!objectDetectionModel.readObjectModel(activity, modelUri))
+            if (!objectDetectionModel.readObjectModel(modelUri))
             {
                 Log.v(TAG, " -=-=-=-=-=-=-=-=-=-=-=-=- Object Detection Model Read Failure... $modelUri  -=-=-=-=-=-=-=-=-=-=-=-=- ")
             }
