@@ -31,6 +31,8 @@
     <string name="pref_degug_info">Debug Information</string>
     <string name="pref_summary_debug_info">LogCat Information</string>
 
+    <string name="pref_instruction_manual_url">https://osdn.net/projects/gokigen/wiki/A01f</string>
+    <string name="pref_privacy_policy_url">https://osdn.net/projects/gokigen/wiki/PrivacyPolicy</string>
 
     <string name="pref_for_object_detection_model_file"> Object Detection Model  : </string>
     <string name="pref_for_object_detection_label_map_file"> Object Detect Label Map : </string>
@@ -77,4 +79,5 @@
     <string name="dialog_message_exit">Exit Application</string>
 
     <string name="command_line_disconnected">Camera control line is disconnected.</string>
+
 </resources>

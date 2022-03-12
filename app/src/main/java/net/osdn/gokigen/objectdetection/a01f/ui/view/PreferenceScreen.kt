@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,22 +26,12 @@ import net.osdn.gokigen.objectdetection.a01f.preference.GetPickFilePermission
 @Composable
 fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsModel, vibrator : IVibrator)
 {
-    val scope = rememberCoroutineScope()
-    val captureBothLiveViewAndCamera = prefsModel.captureBothLvAndCamera.observeAsState(initial = prefsModel.captureBothLvAndCamera.value ?: false)
     val padding = 2.dp
 
     MaterialTheme {
         Column {
             Spacer(Modifier.size(padding))
-            SharedPrefsToggle(
-                text = stringResource(R.string.pref_capture_both_camera_and_live_view),
-                value = captureBothLiveViewAndCamera.value,
-                onValueChanged = {
-                    scope.launch {
-                        prefsModel.setCaptureBothLvAndCamera(!captureBothLiveViewAndCamera.value)
-                    }
-                }
-            )
+            CaptureBothLiveViewAndCamera(prefsModel)
             Spacer(Modifier.size(padding))
             Divider(color = Color.LightGray, thickness = 1.dp)
             Spacer(Modifier.size(padding))
@@ -52,16 +43,29 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsMode
             Spacer(Modifier.size(padding))
             Divider(color = Color.LightGray, thickness = 1.dp)
             Spacer(Modifier.size(padding))
+            Spacer(Modifier.size(padding))
+            ShowAboutGokigen()
+            Spacer(Modifier.size(padding))
+            ShowGokigenPrivacyPolicy()
+            Spacer(Modifier.size(padding))
         }
     }
 }
 
 @Composable
-fun SharedPrefsToggle(text: String, value: Boolean, onValueChanged: (Boolean) -> Unit)
+fun CaptureBothLiveViewAndCamera(prefsModel: A01fPrefsModel)
 {
+    val scope = rememberCoroutineScope()
+    val captureBothLiveViewAndCamera = prefsModel.captureBothLvAndCamera.observeAsState(initial = prefsModel.captureBothLvAndCamera.value ?: false)
     Row (verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(checked = value, onCheckedChange = onValueChanged)
-        Text(text)
+        Checkbox(
+            checked = captureBothLiveViewAndCamera.value,
+            onCheckedChange = {
+                scope.launch {
+                    prefsModel.setCaptureBothLvAndCamera(!captureBothLiveViewAndCamera.value)
+                }
+            })
+        Text(stringResource(R.string.pref_capture_both_camera_and_live_view))
     }
 }
 
@@ -129,5 +133,49 @@ fun FilePickerForObjectDetectionModel(prefsModel: A01fPrefsModel)
 
     Row (verticalAlignment = Alignment.CenterVertically) {
         Text(" " + stringResource(id = R.string.pref_for_object_detection_model_file) + " " + prefsModel.getObjectDetectionFileName(), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") })
+    }
+}
+
+@Composable
+fun ShowAboutGokigen()
+{
+    val uriHandler = LocalUriHandler.current
+    val openUri = stringResource(R.string.pref_instruction_manual_url)
+    Row(modifier = Modifier.padding(all = 8.dp)) {
+        Spacer(modifier = Modifier.width(8.dp))
+        Column {
+            Text(
+                text = stringResource(R.string.pref_instruction_manual),
+                color = MaterialTheme.colors.primaryVariant
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = openUri,
+                color = MaterialTheme.colors.secondaryVariant,
+                modifier = Modifier.clickable(onClick = { uriHandler.openUri(openUri) })
+            )
+        }
+    }
+}
+
+@Composable
+fun ShowGokigenPrivacyPolicy()
+{
+    val uriHandler = LocalUriHandler.current
+    val openUri = stringResource(R.string.pref_privacy_policy_url)
+    Row(modifier = Modifier.padding(all = 8.dp)) {
+        Spacer(modifier = Modifier.width(8.dp))
+        Column {
+            Text(
+                text = stringResource(R.string.pref_privacy_policy),
+                color = MaterialTheme.colors.primaryVariant
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = openUri,
+                color = MaterialTheme.colors.secondaryVariant,
+                modifier = Modifier.clickable(onClick = { uriHandler.openUri(openUri) })
+            )
+        }
     }
 }

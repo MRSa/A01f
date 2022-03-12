@@ -4,7 +4,7 @@ plugins {
 }
 
 //  for Jetpack Compose
-def compose_version = '1.2.0-alpha04'
+def compose_version = '1.2.0-alpha05'
 def navigation_version = '2.5.0-alpha03'
 
 //  for cameraX
@@ -18,8 +18,8 @@ android {
         applicationId "net.osdn.gokigen.objectdetection.a01f"
         minSdk 21
         targetSdk 32
-        versionCode 10000
-        versionName "1.0.0"
+        versionCode 50000
+        versionName "0.5.0"
     }
 
     buildTypes {
@@ -79,7 +79,7 @@ dependencies {
 
     implementation "androidx.navigation:navigation-compose:$navigation_version"
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
 
     //implementation "org.tensorflow:tensorflow-lite:2.3.0"
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.3.0'
