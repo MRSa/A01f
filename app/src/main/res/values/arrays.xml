@@ -3,7 +3,7 @@
 
     <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
     <string-array name="connection_method">
-        <item>Selected Picture</item>
+        <item>Selected Image (file)</item>
         <item>Internal Camera</item>
         <item>Ricoh GR / PENTAX</item>
         <item>Ricoh Theta(OSC)</item>

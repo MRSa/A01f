@@ -12,7 +12,7 @@ interface IApplicationConstantConvert
         const val ID_AREA_MESSAGE = R.id.message
 
         const val ID_DRAWABLE_SPLASH_IMAGE = R.drawable.a01f
-        const val ID_DRAWABLE_BACKGROUND_IMAGE = R.drawable.background
+        const val ID_DRAWABLE_BACKGROUND_IMAGE = R.drawable.a01f1
 
         const val ID_LAYOUT_CAMERA_CAPTURE = R.layout.camera_capture
         const val ID_LIVE_VIEW_LAYOUT_DEFAULT = R.layout.liveimage_view
