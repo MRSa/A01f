@@ -1,17 +1,23 @@
 package net.osdn.gokigen.objectdetection.a01f.ui.view
 
+import android.content.Intent
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -30,7 +36,12 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsMode
 
     MaterialTheme {
         Column {
+            PreferenceScreenTitle()
             Spacer(Modifier.size(padding))
+            Divider(color = Color.LightGray, thickness = 1.dp)
+            ShowWifiSetting()
+            Spacer(Modifier.size(padding))
+            Divider(color = Color.LightGray, thickness = 1.dp)
             CaptureBothLiveViewAndCamera(prefsModel)
             Spacer(Modifier.size(padding))
             Divider(color = Color.LightGray, thickness = 1.dp)
@@ -43,7 +54,6 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsMode
             Spacer(Modifier.size(padding))
             Divider(color = Color.LightGray, thickness = 1.dp)
             Spacer(Modifier.size(padding))
-            Spacer(Modifier.size(padding))
             ShowAboutGokigen()
             Spacer(Modifier.size(padding))
             ShowGokigenPrivacyPolicy()
@@ -55,6 +65,7 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsMode
 @Composable
 fun CaptureBothLiveViewAndCamera(prefsModel: A01fPrefsModel)
 {
+    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val captureBothLiveViewAndCamera = prefsModel.captureBothLvAndCamera.observeAsState(initial = prefsModel.captureBothLvAndCamera.value ?: false)
     Row (verticalAlignment = Alignment.CenterVertically) {
@@ -65,13 +76,19 @@ fun CaptureBothLiveViewAndCamera(prefsModel: A01fPrefsModel)
                     prefsModel.setCaptureBothLvAndCamera(!captureBothLiveViewAndCamera.value)
                 }
             })
-        Text(stringResource(R.string.pref_capture_both_camera_and_live_view))
+        Text(text = stringResource(R.string.pref_capture_both_camera_and_live_view),
+            fontSize = with(density) { 18.dp.toSp() },
+            modifier = Modifier.clickable( onClick = {
+                scope.launch { prefsModel.setCaptureBothLvAndCamera(!captureBothLiveViewAndCamera.value) }
+            })
+        )
     }
 }
 
 @Composable
 fun CameraConnectionMethodDropdown(prefsModel: A01fPrefsModel, vibrator : IVibrator)
 {
+    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val cameraConnectionMethodExpanded = prefsModel.isCameraConnectionMethodExpanded.observeAsState(initial = prefsModel.isCameraConnectionMethodExpanded.value ?: false)
     val cameraConnectionMethodIndex = prefsModel.cameraConnectionMethodSelectionIndex.observeAsState(initial = prefsModel.cameraConnectionMethodSelectionIndex.value ?: 3)
@@ -81,21 +98,29 @@ fun CameraConnectionMethodDropdown(prefsModel: A01fPrefsModel, vibrator : IVibra
     val itemLabels = stringArrayResource(id = R.array.connection_method)
 
     Box(modifier = Modifier
-        .fillMaxSize()
-        .wrapContentSize(Alignment.TopStart)) {
-        Text(" " + stringResource(id = R.string.pref_connection_method) + " : " + itemLabels[selectedIndex],modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = {
-                expanded = true
-                prefsModel.setIsCameraConnectionMethodExpanded(true)
-            })
-            .background(Color.White))
+        .wrapContentSize(Alignment.TopStart)
+        .padding(all = 10.dp)) {
+        Row {
+            Text(
+                text = " " + stringResource(id = R.string.pref_connection_method) + " : " + itemLabels[selectedIndex],
+                modifier = Modifier
+                    .clickable(onClick = {
+                        expanded = true
+                        prefsModel.setIsCameraConnectionMethodExpanded(true)
+                    }),
+                fontSize = with(density) { 18.dp.toSp() }
+            )
+            Icon(imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = "",
+                modifier = Modifier
+                .clickable(onClick = {
+                    expanded = true
+                    prefsModel.setIsCameraConnectionMethodExpanded(true)
+                }))
+        }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray)
         ) {
             itemLabels.forEachIndexed { index, s ->
                 DropdownMenuItem(onClick = {
@@ -108,7 +133,7 @@ fun CameraConnectionMethodDropdown(prefsModel: A01fPrefsModel, vibrator : IVibra
                         Log.v("CameraConnectionMethod", "selected Index: $selectedIndex value: ")
                     }
                 }) {
-                    Text(text = s)
+                    Text(text = s, fontSize = with(density) { 18.dp.toSp() })
                 }
             }
         }
@@ -118,6 +143,7 @@ fun CameraConnectionMethodDropdown(prefsModel: A01fPrefsModel, vibrator : IVibra
 @Composable
 fun FilePickerForObjectDetectionModel(prefsModel: A01fPrefsModel)
 {
+    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
 
     //val filePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { modelUri ->
@@ -131,14 +157,51 @@ fun FilePickerForObjectDetectionModel(prefsModel: A01fPrefsModel)
         }
     }
 
-    Row (verticalAlignment = Alignment.CenterVertically) {
-        Text(" " + stringResource(id = R.string.pref_for_object_detection_model_file) + " " + prefsModel.getObjectDetectionFileName(), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") })
+    Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(all = 10.dp)) {
+        Text(" " + stringResource(id = R.string.pref_for_object_detection_model_file) + " " + prefsModel.getObjectDetectionFileName(), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") }, fontSize = with(density) { 18.dp.toSp() })
     }
 }
 
 @Composable
+fun PreferenceScreenTitle()
+{
+    val density = LocalDensity.current
+    TopAppBar()
+    {
+        Text(text = stringResource(id = R.string.pref_cat_application_settings),
+            fontSize = with(density) { 24.dp.toSp() },
+            modifier = Modifier.padding(all = 6.dp))
+    }
+}
+
+@Composable
+fun ShowWifiSetting()
+{
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    Row(modifier = Modifier.padding(all = 8.dp)) {
+        Spacer(modifier = Modifier.width(8.dp))
+        Icon(imageVector = Icons.Default.Wifi, contentDescription = "Wifi",
+            modifier = Modifier.clickable( onClick = {
+                    context.startActivity(Intent(Intent(Settings.ACTION_WIFI_SETTINGS)))
+                })
+        )
+        Text(
+            text = stringResource(R.string.pref_wifi_settings),
+            fontSize = with(density) { 18.dp.toSp() },
+            modifier = Modifier.padding(all = 4.dp)
+                .clickable( onClick = {
+                    context.startActivity(Intent(Intent(Settings.ACTION_WIFI_SETTINGS)))
+                })
+        )
+    }
+}
+
+
+@Composable
 fun ShowAboutGokigen()
 {
+    val density = LocalDensity.current
     val uriHandler = LocalUriHandler.current
     val openUri = stringResource(R.string.pref_instruction_manual_url)
     Row(modifier = Modifier.padding(all = 8.dp)) {
@@ -146,13 +209,15 @@ fun ShowAboutGokigen()
         Column {
             Text(
                 text = stringResource(R.string.pref_instruction_manual),
-                color = MaterialTheme.colors.primaryVariant
+                color = MaterialTheme.colors.primaryVariant,
+                fontSize = with(density) { 18.dp.toSp() }
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = openUri,
                 color = MaterialTheme.colors.secondaryVariant,
-                modifier = Modifier.clickable(onClick = { uriHandler.openUri(openUri) })
+                modifier = Modifier.clickable(onClick = { uriHandler.openUri(openUri) }),
+                fontSize = with(density) { 14.dp.toSp() }
             )
         }
     }
@@ -161,6 +226,7 @@ fun ShowAboutGokigen()
 @Composable
 fun ShowGokigenPrivacyPolicy()
 {
+    val density = LocalDensity.current
     val uriHandler = LocalUriHandler.current
     val openUri = stringResource(R.string.pref_privacy_policy_url)
     Row(modifier = Modifier.padding(all = 8.dp)) {
@@ -168,13 +234,15 @@ fun ShowGokigenPrivacyPolicy()
         Column {
             Text(
                 text = stringResource(R.string.pref_privacy_policy),
-                color = MaterialTheme.colors.primaryVariant
+                color = MaterialTheme.colors.primaryVariant,
+                fontSize = with(density) { 18.dp.toSp() }
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = openUri,
                 color = MaterialTheme.colors.secondaryVariant,
-                modifier = Modifier.clickable(onClick = { uriHandler.openUri(openUri) })
+                modifier = Modifier.clickable(onClick = { uriHandler.openUri(openUri) }),
+                fontSize = with(density) { 14.dp.toSp() }
             )
         }
     }

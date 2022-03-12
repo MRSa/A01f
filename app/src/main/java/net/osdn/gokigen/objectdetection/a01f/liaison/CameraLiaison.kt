@@ -30,7 +30,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
                 (preference.getString(
                     IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX,
                     IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE
-                ))?.toInt() ?: 3
+                ))?.toInt() ?: 2
             }
             catch (e: Exception)
             {

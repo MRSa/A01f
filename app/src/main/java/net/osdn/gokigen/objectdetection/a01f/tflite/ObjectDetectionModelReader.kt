@@ -9,10 +9,12 @@ import android.provider.MediaStore
 import android.util.Log
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_PT
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
+import net.osdn.gokigen.objectdetection.a01f.R
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.task.vision.detector.Detection
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
@@ -30,6 +32,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
 
     private lateinit var detectResults: MutableList<Detection>
     private lateinit var targetRectF : RectF
+    private var isObjectModelReady = false
 
     fun readObjectModel(uri: Uri) : Boolean
     {
@@ -56,8 +59,18 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
                 //objectDetector = ObjectDetector.createFromBufferAndOptions(ByteBuffer.wrap(data), options)
             }
+            isObjectModelReady = true
             Log.v(TAG, " ----- ObjectDetector is Ready! -----")
             return (true)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        isObjectModelReady = false
+        try
+        {
+            activity.runOnUiThread { Toast.makeText(activity, activity.getString(R.string.object_detection_model_load_failure), Toast.LENGTH_SHORT).show() }
         }
         catch (e: Exception)
         {
@@ -97,7 +110,6 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
 
                 val centerX = canvas.width / 2
                 val centerY = canvas.height / 2
-
 
                 var count = 1
                 for (r in detectResults)
@@ -176,11 +188,18 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
     {
         try
         {
-            val bitmap = imageProvider.getImage()
-            targetRectF = RectF(0.0f, 0.0f, (bitmap.width).toFloat(), (bitmap.height).toFloat())
-            Log.v(TAG, " - - - - - - - - - Object Detection (${targetRectF})")
-            detectResults = objectDetector.detect(TensorImage.fromBitmap(bitmap))
-            Log.v(TAG, " - - - - - - - - - Object Detection (results: ${detectResults.size})")
+            if (isObjectModelReady)
+            {
+                val bitmap = imageProvider.getImage()
+                targetRectF = RectF(0.0f, 0.0f, (bitmap.width).toFloat(), (bitmap.height).toFloat())
+                Log.v(TAG, " - - - - Object Detection (${targetRectF})")
+                detectResults = objectDetector.detect(TensorImage.fromBitmap(bitmap))
+                Log.v(TAG, " - - - - Object Detection (results: ${detectResults.size})")
+            }
+            else
+            {
+                Log.v(TAG, " - - - - The object detection model is not ready...")
+            }
         }
         catch (e: Throwable)
         {

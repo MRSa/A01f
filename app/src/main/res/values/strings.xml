@@ -15,7 +15,7 @@
     <string name="save_local_location">Save local location</string>
     <string name="notification_title">Use Notification</string>
     <string name="pref_use_camerax_preview">Use Camera preview(need restart)</string>
-    <string name="pref_connection_method">Camera Connection Method</string>
+    <string name="pref_connection_method">Input Image </string>
     <string name="pref_summary_connection_method"> </string>
 
     <string name="pref_cat_camera">Camera</string>
@@ -35,7 +35,7 @@
     <string name="pref_privacy_policy_url">https://osdn.net/projects/gokigen/wiki/PrivacyPolicy</string>
 
     <string name="pref_for_object_detection_model_file"> Object Detection Model  : </string>
-    <string name="pref_for_object_detection_label_map_file"> Object Detect Label Map : </string>
+    <string name="object_detection_model_load_failure">Object Detection Model is not Ready…</string>
 
     <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
     <string name="blank"> </string>

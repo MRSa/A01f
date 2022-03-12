@@ -94,14 +94,18 @@ class A01fPrefsModel : ViewModel()
             try
             {
                 val modeFileString = preference.getString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE) ?: ""
-                return (modeFileString.substring(modeFileString.lastIndexOf("%2F") + "%2f".length))
+                val fileName = modeFileString.substring(modeFileString.lastIndexOf("%2F") + "%2f".length)
+                if (fileName.isNotEmpty())
+                {
+                    return (fileName)
+                }
             }
             catch (e: Exception)
             {
                 e.printStackTrace()
             }
         }
-        return ("")
+        return (" --- ")
     }
 
     fun setObjectDetectionFileModel(uri: Uri)
