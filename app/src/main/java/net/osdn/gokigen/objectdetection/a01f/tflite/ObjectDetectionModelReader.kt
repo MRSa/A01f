@@ -38,6 +38,11 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
     {
         try
         {
+            if (uri.toString().isEmpty())
+            {
+                readInternalObjectModel()
+                return (true)
+            }
             Log.v(TAG, " Requested URI : $uri")
 
             var size = 0
@@ -76,8 +81,38 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
         {
             e.printStackTrace()
         }
+        readInternalObjectModel()
         return (false)
     }
+
+    private fun readInternalObjectModel()
+    {
+        try
+        {
+            val fileDescriptor = activity.assets.openFd("model-aoi.tflite")
+            val fileSize = fileDescriptor.length.toInt()
+            val data = ByteArray(fileSize)
+            val inputStream = fileDescriptor.createInputStream()
+            inputStream.read(data, 0 , fileSize)
+            Log.v(TAG, " File Size is  : $fileSize bytes. (data: ${data.size})")
+            val options: ObjectDetectorOptions = ObjectDetectorOptions.builder().setMaxResults(max_detect_objects).build()
+            val byteBuffer = ByteBuffer.allocateDirect(fileSize)
+            byteBuffer.order(ByteOrder.nativeOrder())
+            byteBuffer.put(data)
+            objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
+            //objectDetector = ObjectDetector.createFromBufferAndOptions(ByteBuffer.wrap(data), options)
+            isObjectModelReady = true
+            Log.v(TAG, " ===== ObjectDetector is Ready! =====")
+        }
+        catch (t: Throwable)
+        {
+            t.printStackTrace()
+        }
+    }
+
+
+
+
 
     fun setImageProvider(imageProvider: IImageProvider)
     {
@@ -88,6 +123,12 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
     {
         try
         {
+            if (!::targetRectF.isInitialized)
+            {
+                Log.v(TAG, " object file is not ready... ")
+                return
+            }
+
             if (canvas != null)
             {
                 Log.v(TAG, "onDraw...")
