@@ -1,5 +1,6 @@
 package net.osdn.gokigen.objectdetection.a01f.tflite
 
+import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -11,10 +12,12 @@ import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_PT
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.liveview.IAnotherDrawer
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import net.osdn.gokigen.objectdetection.a01f.R
+import net.osdn.gokigen.objectdetection.a01f.preference.IPreferencePropertyAccessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.task.vision.detector.Detection
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
@@ -209,6 +212,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
         catch (e: Throwable)
         {
             e.printStackTrace()
+            System.gc()
         }
     }
 
@@ -245,6 +249,20 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
         catch (e: Throwable)
         {
             e.printStackTrace()
+            activity.runOnUiThread {
+                try
+                {
+                    // for avoid OOM loop...
+                    val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
+                    editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_1, "")
+                    editor.apply()
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
+                Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

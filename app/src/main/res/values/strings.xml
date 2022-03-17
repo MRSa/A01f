@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">a01f</string>
+    <string name="app_name">A01f</string>
 
     <!--   Use for MainActivity -->
     <string name="permission_not_granted">Permissions not granted by the user.</string>
@@ -8,7 +8,7 @@
     <string name="pref_cat_application_control">App. Control</string>
     <string name="pref_exit_power_off">Exit Application</string>
     <string name="pref_summary_exit_power_off"> </string>
-    <string name="pref_wifi_settings">WIFI Settings</string>
+    <string name="pref_wifi_settings">Wi-Fi Settings</string>
     <string name="pref_summary_wifi_settings"> </string>
 
     <string name="pref_cat_application_settings">App. Settings</string>

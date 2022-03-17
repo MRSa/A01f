@@ -91,7 +91,7 @@ fun CameraConnectionMethodDropdown(prefsModel: A01fPrefsModel, vibrator : IVibra
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val cameraConnectionMethodExpanded = prefsModel.isCameraConnectionMethodExpanded.observeAsState(initial = prefsModel.isCameraConnectionMethodExpanded.value ?: false)
-    val cameraConnectionMethodIndex = prefsModel.cameraConnectionMethodSelectionIndex.observeAsState(initial = prefsModel.cameraConnectionMethodSelectionIndex.value ?: 3)
+    val cameraConnectionMethodIndex = prefsModel.cameraConnectionMethodSelectionIndex.observeAsState(initial = prefsModel.cameraConnectionMethodSelectionIndex.value ?: 1)
 
     var expanded = cameraConnectionMethodExpanded.value
     var selectedIndex = cameraConnectionMethodIndex.value
