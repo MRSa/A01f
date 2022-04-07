@@ -105,7 +105,7 @@ class A01fPrefsModel : ViewModel()
                 e.printStackTrace()
             }
         }
-        return (" (aoi)")
+        return (" (aohina)")
     }
 
     fun setObjectDetectionFileModel(uri: Uri)

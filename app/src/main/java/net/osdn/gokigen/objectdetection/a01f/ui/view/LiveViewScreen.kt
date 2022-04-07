@@ -24,7 +24,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import net.osdn.gokigen.objectdetection.a01f.R
 import net.osdn.gokigen.objectdetection.a01f.preference.A01fPrefsModel
 
-@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraControl, prefsModel: A01fPrefsModel, vibrator : IVibrator, onTouchListener: LiveViewOnTouchListener, anotherDrawer: IAnotherDrawer?)
@@ -70,6 +70,26 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 }
             }
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
+/*
+                IconButton(
+                    onClick = { cameraControl.getCameraShutter()?.doShutter() },
+                    enabled = true
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_zoom_in_24),
+                        contentDescription = "ZoomIn"
+                    )
+                }
+                IconButton(
+                    onClick = { cameraControl.getCameraShutter()?.doShutter() },
+                    enabled = true,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_zoom_out_24),
+                        contentDescription = "ZoomOut"
+                    )
+                }
+*/
                 IconButton(onClick = { }, enabled = false) {
                     val iconId = when (connectionStatus.value) {
                         ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED -> { R.drawable.ic_baseline_cloud_off_24 }
