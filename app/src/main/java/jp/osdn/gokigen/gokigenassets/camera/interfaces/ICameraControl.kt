@@ -28,6 +28,7 @@ interface ICameraControl
     fun getCameraStatus() : ICameraStatus?
     fun getCameraNumber() : Int
     fun getCameraShutter(id: Int = 0) : ICameraShutter?
+    fun getZoomControl(id : Int = 0) : IZoomLensControl?
 
     fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     fun setNeighborCameraControlFinished()

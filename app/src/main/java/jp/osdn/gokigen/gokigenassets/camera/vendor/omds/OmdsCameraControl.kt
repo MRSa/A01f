@@ -261,6 +261,7 @@ class OmdsCameraControl(private val context: AppCompatActivity, private val vibr
     }
 
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (zoomLensControl) }
 
     override fun detectedOpcProtocol(opcProtocol: Boolean)
     {

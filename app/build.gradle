@@ -4,12 +4,12 @@ plugins {
 }
 
 //  for Jetpack Compose
-def compose_version = '1.2.0-alpha05'
-def navigation_version = '2.5.0-alpha03'
+def compose_version = '1.2.0-alpha07'
+def navigation_version = '2.5.0-alpha04'
 
 //  for cameraX
-def camerax_version = "1.1.0-beta02"
-def camerax_view_version = "1.1.0-beta02"
+def camerax_version = "1.1.0-beta03"
+def camerax_view_version = "1.1.0-beta03"
 
 android {
     compileSdk 32
@@ -18,8 +18,8 @@ android {
         applicationId "net.osdn.gokigen.objectdetection.a01f"
         minSdk 21
         targetSdk 32
-        versionCode 50000
-        versionName "0.5.0"
+        versionCode 70000
+        versionName "0.7.0"
     }
 
     buildTypes {
@@ -55,7 +55,7 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.activity:activity-ktx:1.5.0-alpha03'
+    implementation 'androidx.activity:activity-ktx:1.6.0-alpha01'
 
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'

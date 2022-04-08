@@ -45,7 +45,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 
 class ConsolePanelControl (private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, private val number : Int = 0) : IDisplayInjector,
-    ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus, IDetectPositionReceiver
+    ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, IAnotherDrawer, View.OnTouchListener, ICameraStatus, IDetectPositionReceiver, IZoomLensControl
 {
     private val gestureListener = ConsolePanelGestureListener(this)
     private val gestureDetector = GestureDetectorCompat(context, gestureListener)
@@ -118,6 +118,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
     override fun getAnotherTouchListener(id : Int) : View.OnTouchListener { return (this) }
     override fun getCameraNumber(): Int { return (number) }
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (this) }
 
     override fun setNeighborCameraControl(index: Int, camera0: ICameraControl?, camera1: ICameraControl?, camera2: ICameraControl?, camera3: ICameraControl?)
     {
@@ -819,4 +820,14 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
         }
         return (statusItemSelector.itemSelected(currentCameraControl, widthPosition, heightPosition))
     }
+
+    override fun canZoom(): Boolean { return (false) }
+    override fun updateStatus() { }
+    override fun getMaximumFocalLength(): Float { return (0.0f) }
+    override fun getMinimumFocalLength(): Float { return (0.0f) }
+    override fun getCurrentFocalLength(): Float { return (0.0f) }
+    override fun driveZoomLens(targetLength: Float) { }
+    override fun driveZoomLens(isZoomIn: Boolean) { }
+    override fun moveInitialZoomPosition() { }
+    override fun isDrivingZoomLens(): Boolean { return (false) }
 }

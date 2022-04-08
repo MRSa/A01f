@@ -25,7 +25,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IInformationReceiver
 import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.io.InputStream
 
-class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, private val number : Int = 0, private val liveViewListener :CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify, isDisableCache = true)) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, ICameraStatus
+class ExamplePictureControl(private val context: AppCompatActivity, private val vibrator : IVibrator, informationNotify: IInformationReceiver, private val preference: ICameraPreferenceProvider, private val number : Int = 0, private val liveViewListener :CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(context, informationNotify, isDisableCache = true)) : IDisplayInjector, ILiveViewController, ICameraControl, View.OnClickListener, View.OnLongClickListener, ICaptureModeReceiver, ICameraShutter, IKeyDown, ICameraStatus, IZoomLensControl
 {
     private lateinit var refresher : ILiveViewRefresher
 
@@ -93,6 +93,17 @@ class ExamplePictureControl(private val context: AppCompatActivity, private val 
     override fun setStatus(key: String, value: String) { }
     override fun getCameraNumber(): Int { return (number) }
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (this) }
+
+    override fun canZoom(): Boolean { return (false) }
+    override fun updateStatus() { }
+    override fun getMaximumFocalLength(): Float { return (0.0f) }
+    override fun getMinimumFocalLength(): Float { return (0.0f) }
+    override fun getCurrentFocalLength(): Float { return (0.0f) }
+    override fun driveZoomLens(targetLength: Float) { }
+    override fun driveZoomLens(isZoomIn: Boolean) { }
+    override fun moveInitialZoomPosition() { }
+    override fun isDrivingZoomLens(): Boolean { return (false) }
 
     override fun setRefresher(id: Int, refresher: ILiveViewRefresher, imageView: ILiveView, cachePosition : ICachePositionProvider)
     {

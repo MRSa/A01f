@@ -428,5 +428,6 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
     }
 
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (zoomControl) }
 
 }

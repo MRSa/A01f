@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
@@ -70,9 +71,8 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 }
             }
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
-/*
                 IconButton(
-                    onClick = { cameraControl.getCameraShutter()?.doShutter() },
+                    onClick = { cameraControl.getZoomControl()?.driveZoomLens(true) },
                     enabled = true
                 ) {
                     Icon(
@@ -80,8 +80,9 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                         contentDescription = "ZoomIn"
                     )
                 }
+                Spacer(modifier = Modifier.width(6.dp))
                 IconButton(
-                    onClick = { cameraControl.getCameraShutter()?.doShutter() },
+                    onClick = { cameraControl.getZoomControl()?.driveZoomLens(false) },
                     enabled = true,
                 ) {
                     Icon(
@@ -89,7 +90,7 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                         contentDescription = "ZoomOut"
                     )
                 }
-*/
+                Spacer(modifier = Modifier.width(12.dp))
                 IconButton(onClick = { }, enabled = false) {
                     val iconId = when (connectionStatus.value) {
                         ICameraConnectionStatus.CameraConnectionStatus.DISCONNECTED -> { R.drawable.ic_baseline_cloud_off_24 }

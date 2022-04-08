@@ -9,6 +9,7 @@ import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.FocusControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.MovieShotControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.SingleShotControl
+import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.operation.ZoomControl
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.IPixproCameraInitializer
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.PixproCamera
@@ -43,6 +44,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
     private val pixproCameraParameter = PixproCamera()
     private val commandCommunicator = PixproCommandCommunicator(pixproCameraParameter, this, statusChecker)
     private val storeImage = StoreImage(context, liveViewListener)
+    private val zoomControl = ZoomControl(commandCommunicator)
 
     private lateinit var liveViewControl : PixproLiveViewControl
     private lateinit var cachePositionProvider : ICachePositionProvider
@@ -306,6 +308,7 @@ class PixproCameraControl(private val context: AppCompatActivity, private val vi
     }
 
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (zoomControl) }
 
     private fun captureImageLiveView() : Boolean
     {

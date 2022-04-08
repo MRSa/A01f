@@ -434,5 +434,6 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
     }
 
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (zoomControl) }
 
 }

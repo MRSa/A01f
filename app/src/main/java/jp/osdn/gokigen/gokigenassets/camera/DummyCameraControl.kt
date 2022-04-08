@@ -8,7 +8,7 @@ import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 
-class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown, ICameraStatus, ICameraShutter
+class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.OnClickListener, View.OnLongClickListener, IKeyDown, ICameraStatus, ICameraShutter, IZoomLensControl
 {
     override fun getConnectionMethod(): String { return ("NONE") }
     override fun initialize() { }
@@ -28,6 +28,8 @@ class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.On
     override fun getCameraStatus(): ICameraStatus { return (this) }
     override fun getCameraNumber(): Int { return (number) }
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (this) }
+
     override fun onClick(v: View?) { }
     override fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean { return (false) }
     override fun onLongClick(v: View?): Boolean { return (false) }
@@ -37,4 +39,14 @@ class DummyCameraControl(private val number : Int = 0) : ICameraControl, View.On
     override fun setStatus(key: String, value: String) { }
     override fun doShutter() { }
     override fun doShutterOff() { }
+
+    override fun canZoom(): Boolean { return (false) }
+    override fun updateStatus() { }
+    override fun getMaximumFocalLength(): Float { return (0.0f) }
+    override fun getMinimumFocalLength(): Float { return (0.0f) }
+    override fun getCurrentFocalLength(): Float { return (0.0f) }
+    override fun driveZoomLens(targetLength: Float) { }
+    override fun driveZoomLens(isZoomIn: Boolean) { }
+    override fun moveInitialZoomPosition() { }
+    override fun isDrivingZoomLens(): Boolean { return (false) }
 }
