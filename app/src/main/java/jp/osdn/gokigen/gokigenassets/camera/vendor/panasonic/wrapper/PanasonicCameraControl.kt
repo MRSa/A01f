@@ -73,6 +73,7 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
                 }
                 focusControl?.setCamera(panasonicCamera)
                 captureControl?.setCamera(panasonicCamera)
+                captureControl?.setCameraStatus(statusChecker.getCameraStatusConvert())
                 zoomControl.setCamera(panasonicCamera)
             }
             catch (e: Exception)

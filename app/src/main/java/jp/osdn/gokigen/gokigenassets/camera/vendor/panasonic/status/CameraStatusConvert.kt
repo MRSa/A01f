@@ -53,6 +53,7 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
             ICameraStatus.EFFECT -> getPictureEffect()
             ICameraStatus.BATTERY -> getRemainBattery()
             ICameraStatus.TORCH_MODE -> getTorchMode()
+            ICameraStatus.FOCUS_STATUS -> getDriveMode()
             else -> ""
         })
     }
@@ -670,6 +671,47 @@ class CameraStatusConvert(private val statusHolder: CameraStatusHolder, remote: 
             e.printStackTrace()
         }
         return (bracketStatus)
+    }
+
+    private fun getDriveMode() : String
+    {
+        // ドライブモード
+        var driveMode = ""
+        try
+        {
+            val index = 16 * 7 + 14
+            val value = (eventData?.get(index) ?: 0).toInt()
+            if (value != 0)
+            {
+                driveMode = when (value) {
+                    0x00 -> ""
+                    0x05 -> "SH"
+                    0x06 -> "H"
+                    0x07 -> "M"
+                    0x08 -> "S"
+                    0x0d -> "self Timer 10sec."
+                    0x0e -> "self Timer 10sec./3shot"
+                    0x0f -> "self Timer 2sec."
+                    0x1d -> "interval"
+                    0x29 -> "4K pre"
+                    0x2a -> "4K"
+                    0x2b -> "4K s/s"
+
+                    0x33 -> "6K"
+                    0x34 -> "6K s/s"
+                    0x44 -> "SH2"
+                    0x45 -> "SH1"
+                    0x46 -> "SH2 PRE"
+                    0x47 -> "SH1 PRE"
+                    else -> "($value)"
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (driveMode)
     }
 
     private fun getRemainBattery() : String

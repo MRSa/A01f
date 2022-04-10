@@ -610,7 +610,7 @@ class ConsolePanelControl (private val context: AppCompatActivity, private val v
             //  area : bottom-right UP
             val rect = RectF(canvasWidth * 2.0f, canvasHeight * 7.0f, canvas.width.toFloat(), canvasHeight * 8.0f)
             val msg = currentCameraStatus.getStatus(REMAIN_SHOTS)
-            val color = currentCameraStatus.getStatusColor(FOCUS_STATUS)
+            val color = currentCameraStatus.getStatusColor(REMAIN_SHOTS)
             drawString(canvas, rect, msg, color)
         }
         catch (e : Exception)

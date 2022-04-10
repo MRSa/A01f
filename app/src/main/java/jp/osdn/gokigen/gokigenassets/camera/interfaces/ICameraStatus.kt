@@ -31,12 +31,13 @@ interface ICameraStatus
         const val  IMAGE_SIZE = "stillSize"        // 撮影画像サイズ
         const val  MOVIE_SIZE = "movieSize"        // 動画画像サイズ
 
+        //const val DRIVE_MODE = "shootMode"         // ドライブモード (単写・連写)
+
         //var STATE = "state"
         //var FOCUS_MODE = "focusMode"
         //var AF_MODE = "AFMode"
 
         //var RESOLUTION = "reso"
-        //var DRIVE_MODE = "shootMode"
 
         //var AE_STATUS_MULTI = "multi"
         //var AE_STATUS_ESP = "ESP"
