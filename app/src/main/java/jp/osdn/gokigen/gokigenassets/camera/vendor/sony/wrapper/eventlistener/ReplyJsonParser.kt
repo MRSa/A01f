@@ -19,6 +19,7 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
     private var currentZoomPosition = 0
     private var currentStorageId = ""
     private var currentFocusStatus = ""
+    private var currentContShootingMode = ""
 
     fun parse(replyJson: JSONObject)
     {
@@ -32,7 +33,7 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
             }
 
             // CameraStatus
-            val cameraStatus = findCameraStatus(replyJson) ?: ""
+            val cameraStatus = findCameraStatus(replyJson) //?: ""
             Log.d(TAG, "getEvent cameraStatus: $cameraStatus")
             if (cameraStatus != this.cameraStatus)
             {
@@ -41,7 +42,7 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
             }
 
             // LiveviewStatus
-            val liveviewStatus = findLiveviewStatus(replyJson) ?: false
+            val liveviewStatus = findLiveviewStatus(replyJson) //?: false
             Log.d(TAG, "getEvent liveviewStatus: $liveviewStatus")
             if (liveviewStatus != currentLiveviewStatus)
             {
@@ -50,7 +51,7 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
             }
 
             // ShootMode
-            val shootMode = findShootMode(replyJson) ?: ""
+            val shootMode = findShootMode(replyJson) //?: ""
             Log.d(TAG, "getEvent shootMode: $shootMode")
             if (shootMode != currentShootMode)
             {
@@ -72,7 +73,7 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
             }
 
             // storageId
-            val storageId = findStorageId(replyJson) ?: ""
+            val storageId = findStorageId(replyJson) //?: ""
             Log.d(TAG, "getEvent storageId:$storageId")
             if (storageId != currentStorageId)
             {
@@ -81,13 +82,23 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
             }
 
             // focusStatus (v1.1)
-            val focusStatus = findFocusStatus(replyJson) ?: ""
+            val focusStatus = findFocusStatus(replyJson) //?: ""
             Log.d(TAG, "getEvent focusStatus:$focusStatus")
             if (focusStatus != currentFocusStatus)
             {
                 currentFocusStatus = focusStatus
                 uiHandler.post { listener?.onFocusStatusChanged(focusStatus) }
             }
+
+            // contShootingMode (v1.2)
+            val contShootingMode = findContShootingMode(replyJson) //?: ""
+            Log.d(TAG, "getEvent contShootingMode:$contShootingMode")
+            if (contShootingMode != currentContShootingMode)
+            {
+                currentContShootingMode = contShootingMode
+                uiHandler.post { listener?.onDriveModeChanged(contShootingMode) }
+            }
+
         }
         catch (e: Exception)
         {
@@ -291,7 +302,7 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
                     }
                     else
                     {
-                        Log.w(TAG, "Event reply: Illegal Index (11: storageInformation) $type")
+                        Log.w(TAG, "Event reply: Illegal Index (10: storageInformation) $type")
                     }
                 }
             }
@@ -320,7 +331,7 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
                 }
                 else
                 {
-                    Log.w(TAG, "Event reply: Illegal Index (21: ShootMode) $type")
+                    Log.w(TAG, "Event reply: Illegal Index (35: focusStatus) $type")
                 }
             }
         }
@@ -329,6 +340,34 @@ class ReplyJsonParser(private val uiHandler: Handler) : ICameraStatusHolder
             e.printStackTrace()
         }
         return (focusStatus)
+    }
+
+    private fun findContShootingMode(replyJson: JSONObject): String
+    {
+        var contShootingMode = ""
+        try
+        {
+            val indexOfContShootingMode = 38
+            val resultsObj = replyJson.getJSONArray("result")
+            if (!resultsObj.isNull(indexOfContShootingMode))
+            {
+                val focusStatusObj = resultsObj.getJSONObject(indexOfContShootingMode)
+                val type = focusStatusObj.getString("type")
+                if ("focusStatus" == type)
+                {
+                    contShootingMode = focusStatusObj.getString("contShootingMode")
+                }
+                else
+                {
+                    Log.w(TAG, "Event reply: Illegal Index (38: contShootingMode) $type")
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return (contShootingMode)
     }
 
     fun setEventChangeListener(listener: ICameraChangeListener?)

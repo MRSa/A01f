@@ -29,6 +29,8 @@ interface ISonyCameraApi
     fun startRecMode(): JSONObject?
     fun actTakePicture(): JSONObject?
     fun awaitTakePicture(): JSONObject?
+    fun startContShooting(): JSONObject?
+    fun stopContShooting(): JSONObject?
     fun startMovieRec(): JSONObject?
     fun stopMovieRec(): JSONObject?
     fun actZoom(direction: String, movement: String): JSONObject?

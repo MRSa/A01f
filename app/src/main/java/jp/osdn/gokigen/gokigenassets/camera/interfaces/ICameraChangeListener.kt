@@ -9,5 +9,6 @@ interface ICameraChangeListener
     fun onZoomPositionChanged(zoomPosition: Int)
     fun onStorageIdChanged(storageId: String?)
     fun onFocusStatusChanged(focusStatus: String?)
+    fun onDriveModeChanged(driveMode: String?)
     fun onResponseError()
 }

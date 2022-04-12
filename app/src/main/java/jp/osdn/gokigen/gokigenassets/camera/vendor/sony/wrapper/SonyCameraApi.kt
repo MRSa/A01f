@@ -272,6 +272,32 @@ class SonyCameraApi(private val sonyCamera: ISonyCamera) : ISonyCameraApi
         return JSONObject()
     }
 
+    override fun startContShooting(): JSONObject
+    {
+        try
+        {
+            return communicateJSON("camera", "startContShooting", JSONArray(), "1.0", -1)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return JSONObject()
+    }
+
+    override fun stopContShooting(): JSONObject
+    {
+        try
+        {
+            return communicateJSON("camera", "stopContShooting", JSONArray(), "1.0", -1)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return JSONObject()
+    }
+
     override fun startMovieRec(): JSONObject
     {
         try {

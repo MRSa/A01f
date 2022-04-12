@@ -56,6 +56,10 @@ class PanasonicCardSlotSelector() : ICardSlotSelector, ICameraChangeListener
         // TODO("Not yet implemented")
     }
 
+    override fun onDriveModeChanged(driveMode: String?) {
+        // TODO("Not yet implemented")
+    }
+
     override fun onResponseError()
     {
         // TODO("Not yet implemented")

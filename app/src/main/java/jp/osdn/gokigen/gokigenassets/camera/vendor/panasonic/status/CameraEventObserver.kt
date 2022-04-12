@@ -94,6 +94,7 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         return true
     }
 
+
     fun setEventListener(listener: ICameraChangeListener)
     {
         try

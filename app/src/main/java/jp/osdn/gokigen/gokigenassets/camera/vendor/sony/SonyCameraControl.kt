@@ -83,6 +83,7 @@ class SonyCameraControl(private val context: AppCompatActivity, private val vibr
                 if (::captureControl.isInitialized)
                 {
                     captureControl.setCameraApi(sonyCameraApi)
+                    captureControl.setCameraStatus(sonyCameraStatus)
                 }
             }
             catch (e: Exception)
