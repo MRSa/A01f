@@ -10,6 +10,7 @@ import java.lang.Exception
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.util.*
+import kotlin.experimental.and
 
 class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
                           private val statusWatcher: OmdsCameraStatusWatcher,
@@ -19,7 +20,11 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
 {
     private val headerMap: MutableMap<String, String> = HashMap()
     private val http = SimpleHttpClient()
-    private val receivedByteStream = ByteArrayOutputStream(RECEIVE_BUFFER_SIZE)
+
+    private val receivedImageBuffer = ByteArray(RECEIVE_BUFFER_SIZE)
+    private var receivedImageBufferOffset = 0
+    private var nextSequenceNumber = 0
+
 
     private var receiveSocket: DatagramSocket? = null
     private var whileStreamReceive = false
@@ -97,7 +102,7 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
         {
             receiveSocket = DatagramSocket(LIVEVIEW_PORT)
             whileStreamReceive = true
-            receivedByteStream.flush()
+            receivedImageBufferOffset = 0
         }
         catch (e: Exception)
         {
@@ -124,6 +129,8 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
         {
             val dataLength = packet.length
             val receivedData = packet.data
+            //val receivedData = ByteArray(dataLength)
+            //packet.data.copyInto(receivedData, 0, 0, packet.length)
             if (receivedData == null)
             {
                 // 受信データが取れなかったのでいったん終了する
@@ -139,21 +146,31 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
                 extensionLength = 16
                 extensionLength = checkJpegStartPosition(receivedData, extensionLength) - position
                 statusWatcher.setRtpHeader(Arrays.copyOf(receivedData, extensionLength))
+                //Log.v(TAG, " START BYTE : $receivedImageBufferOffset")
                 System.gc()
-            } else if (receivedData[1] == 0xe0.toByte())
+                nextSequenceNumber = (receivedData[2] and 0xff.toByte()).toInt() * 256 + (0xff.toByte() and receivedData[3]).toInt()
+                receivedImageBufferOffset = 0
+            }
+            else if ((receivedData[1] == 0xe0.toByte())&&(receivedData[dataLength - 2] == 0xff.toByte())&&(receivedData[dataLength - 1] == 0xd9.toByte()))
             {
                 // 末尾パケット (RTPヘッダは 12bytes)
                 isFinished = true
             }
             val offset = position + extensionLength
-            receivedByteStream.write(receivedData, position + extensionLength, dataLength - offset)
-            if (isFinished)
+
+            receivedData.copyInto(receivedImageBuffer, receivedImageBufferOffset, offset, dataLength)
+            val sequenceNumber = (receivedData[2] and 0xff.toByte()).toInt() * 256 + (0xff.toByte() and receivedData[3]).toInt() + 1
+            receivedImageBufferOffset += dataLength - offset
+            if (receivedImageBufferOffset > 0)
             {
-                val dataArray = receivedByteStream.toByteArray()
-                receivedByteStream.flush()
-                imageDataReceiver.onUpdateLiveView(Arrays.copyOf(dataArray, dataArray.size), null)
-                receivedByteStream.reset()
-                //System.gc();
+                nextSequenceNumber++
+            }
+            //Log.v(TAG, " RECV.: len:$dataLength, offset: $offset, copy: ${dataLength - offset} size: $receivedImageBufferOffset   [seq.]:$sequenceNumber : $nextSequenceNumber")
+            if ((isFinished)&&(sequenceNumber == nextSequenceNumber))
+            {
+                Log.v(TAG, " RECV.IMAGE : Size:${receivedImageBufferOffset}")
+                imageDataReceiver.onUpdateLiveView(receivedImageBuffer.copyOfRange(0, receivedImageBufferOffset), null)
+                receivedImageBufferOffset = 0
             }
         }
         catch (e: Exception)

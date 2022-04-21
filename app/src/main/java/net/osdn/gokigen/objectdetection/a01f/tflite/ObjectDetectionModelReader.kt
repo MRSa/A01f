@@ -113,10 +113,6 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
         }
     }
 
-
-
-
-
     fun setImageProvider(imageProvider: IImageProvider)
     {
         this.imageProvider = imageProvider
@@ -156,54 +152,57 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 val centerY = canvas.height / 2
 
                 var count = 1
-                for (r in detectResults)
+                if (::detectResults.isInitialized)
                 {
-                    //Log.v(TAG, "[$count](${r.boundingBox}) : ${r.categories[0].label} : ${r.categories[0].score}")
-                    if (r.categories[0].score > confidence_level)
+                    for (r in detectResults)
                     {
-                        val drawText = String.format("%s %2.1f%%",r.categories[0].label, + (r.categories[0].score) * 100.0f)
-                        paintRect.color = decideColor(count)
-                        paintText.color = decideColor(count)
-                        if (rotationDegrees != 0)
+                        //Log.v(TAG, "[$count](${r.boundingBox}) : ${r.categories[0].label} : ${r.categories[0].score}")
+                        if (r.categories[0].score > confidence_level)
                         {
-                            canvas.drawText(
-                                drawText,
-                                r.boundingBox.centerY() * posWidth + imageRectF.left,
-                                r.boundingBox.centerX() * posHeight + imageRectF.top,
-                                paintText
-                            )
+                            val drawText = String.format("%s %2.1f%%",r.categories[0].label, +(r.categories[0].score) * 100.0f)
+                            paintRect.color = decideColor(count)
+                            paintText.color = decideColor(count)
+                            if (rotationDegrees != 0)
+                            {
+                                canvas.drawText(
+                                    drawText,
+                                    r.boundingBox.centerY() * posWidth + imageRectF.left,
+                                    r.boundingBox.centerX() * posHeight + imageRectF.top,
+                                    paintText
+                                )
 
-                            canvas.rotate(rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
-                            canvas.drawRoundRect(
-                                r.boundingBox.left * posWidth + imageRectF.left,
-                                r.boundingBox.top * posHeight + imageRectF.top,
-                                r.boundingBox.right * posWidth + imageRectF.left,
-                                r.boundingBox.bottom * posHeight + imageRectF.top,
-                                0.5f,
-                                0.5f,
-                                paintRect
-                            )
-                            canvas.rotate(-rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+                                canvas.rotate(rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+                                canvas.drawRoundRect(
+                                    r.boundingBox.left * posWidth + imageRectF.left,
+                                    r.boundingBox.top * posHeight + imageRectF.top,
+                                    r.boundingBox.right * posWidth + imageRectF.left,
+                                    r.boundingBox.bottom * posHeight + imageRectF.top,
+                                    0.5f,
+                                    0.5f,
+                                    paintRect
+                                )
+                                canvas.rotate(-rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+                            }
+                            else
+                            {
+                                canvas.drawText(
+                                    drawText,
+                                    r.boundingBox.centerX() * posWidth + imageRectF.left,
+                                    r.boundingBox.centerY() * posHeight + imageRectF.top,
+                                    paintText
+                                )
+                                canvas.drawRoundRect(
+                                    r.boundingBox.left * posWidth + imageRectF.left,
+                                    r.boundingBox.top * posHeight + imageRectF.top,
+                                    r.boundingBox.right * posWidth + imageRectF.left,
+                                    r.boundingBox.bottom * posHeight + imageRectF.top,
+                                    0.5f,
+                                    0.5f,
+                                    paintRect
+                                )
+                            }
+                            count++
                         }
-                        else
-                        {
-                            canvas.drawText(
-                                drawText,
-                                r.boundingBox.centerX() * posWidth + imageRectF.left,
-                                r.boundingBox.centerY() * posHeight + imageRectF.top,
-                                paintText
-                            )
-                            canvas.drawRoundRect(
-                                r.boundingBox.left * posWidth + imageRectF.left,
-                                r.boundingBox.top * posHeight + imageRectF.top,
-                                r.boundingBox.right * posWidth + imageRectF.left,
-                                r.boundingBox.bottom * posHeight + imageRectF.top,
-                                0.5f,
-                                0.5f,
-                                paintRect
-                            )
-                        }
-                        count++
                     }
                 }
                 Log.v(TAG, " ----- DETECTED OBJECT : $count")
