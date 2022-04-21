@@ -4,8 +4,8 @@ plugins {
 }
 
 //  for Jetpack Compose
-def compose_version = '1.2.0-alpha07'
-def navigation_version = '2.5.0-alpha04'
+def compose_version = '1.2.0-alpha08'
+def navigation_version = '2.5.0-beta01'
 
 //  for cameraX
 def camerax_version = "1.1.0-beta03"
