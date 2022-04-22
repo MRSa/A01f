@@ -18,8 +18,8 @@ android {
         applicationId "net.osdn.gokigen.objectdetection.a01f"
         minSdk 21
         targetSdk 32
-        versionCode 70000
-        versionName "0.7.0"
+        versionCode 70001
+        versionName "0.7.1"
     }
 
     buildTypes {
