@@ -16,6 +16,7 @@ class RicohGr2CameraCaptureControl(private val captureAfterAf: Boolean, frameDis
     private val singleShotControl = RicohGr2SingleShotControl(frameDisplayer)
     private val movieShotControl = RicohGr2MovieShotControl(frameDisplayer)
     private var useGR2command = false
+
     /**
      *
      *
@@ -39,6 +40,7 @@ class RicohGr2CameraCaptureControl(private val captureAfterAf: Boolean, frameDis
         try
         {
             Log.v(TAG, "doCapture : $kind")
+            //val driveModeStatus = cameraStatus.getStatus((IRicohGr2CameraStatus.DRIVE_MODE))
             val status = cameraStatus.getStatus(IRicohGr2CameraStatus.TAKE_MODE)
             if (status.contains(IRicohGr2CameraStatus.TAKE_MODE_MOVIE))
             {

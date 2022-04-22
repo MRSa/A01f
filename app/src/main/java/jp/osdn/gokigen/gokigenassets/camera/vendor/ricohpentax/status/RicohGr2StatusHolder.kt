@@ -23,6 +23,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
     private var meteringModeStatus = ""
     private var wbModeStatus = ""
     private var batteryStatus = ""
+    private var shootModeStatus = ""
 
     /**
      *
@@ -62,6 +63,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
                 ICameraStatus.EFFECT -> getPictureEffect()
                 ICameraStatus.BATTERY -> getRemainBattery()
                 ICameraStatus.TORCH_MODE -> getTorchMode()
+                ICameraStatus.DRIVE_MODE -> getDriveMode()
                 else -> ""
             }
             return (statusValue)
@@ -96,6 +98,10 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
         return (latestResultObject?.getString("exposureMode") ?: "")
     }
 
+    private fun getDriveMode() : String
+    {
+        return (latestResultObject?.getString("shootMode") ?: "")
+    }
 
     private fun getShutterSpeed() : String
     {
@@ -250,6 +256,7 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
             val av = getStatusString(latestResultObject, "av")
             val tv = getStatusString(latestResultObject, "tv")
             val xv = getStatusString(latestResultObject, "xv")
+            val shootMode = getStatusString(latestResultObject, "shootMode")
             val exposureMode = getStatusString(latestResultObject, "exposureMode")
             val meteringMode = getStatusString(latestResultObject, "meteringMode")
             val wbMode = getStatusString(latestResultObject, "WBMode")
@@ -291,6 +298,12 @@ class RicohGr2StatusHolder(private val notifier: ICameraStatusUpdateNotify?)
                     focused = focus
                     focusLocked = focusLock
                     notifier?.updateFocusedStatus(focused, focusLocked)
+                }
+                if (shootModeStatus != shootMode)
+                {
+                    shootModeStatus = shootMode
+                    notifier?.updateShootMode(shootModeStatus)
+                    Log.v(TAG, " Shoot Mode : $shootModeStatus")
                 }
             }
             System.gc()

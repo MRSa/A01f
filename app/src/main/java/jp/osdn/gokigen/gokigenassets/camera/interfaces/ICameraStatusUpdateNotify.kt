@@ -17,4 +17,5 @@ interface ICameraStatusUpdateNotify
     fun updateIsoSensitivity(sv: String?)
     fun updateWarning(warning: String?)
     fun updateStorageStatus(status: String?)
+    fun updateShootMode(shootMode: String?)
 }
