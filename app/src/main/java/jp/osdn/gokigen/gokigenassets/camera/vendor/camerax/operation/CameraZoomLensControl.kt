@@ -7,10 +7,19 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.IZoomLensControl
 class CameraZoomLensControl(private val cameraXCameraControl: CameraXCameraControl) : IZoomLensControl
 {
     private var isDrivingZoom = false
+    private var minimumZoomRatio : Float = cameraXCameraControl.getZoomState()?.value?.minZoomRatio ?: 1.0f
+    private var maximumZoomRatio : Float = cameraXCameraControl.getZoomState()?.value?.maxZoomRatio ?: 1.0f
+    private var currentZoomRatio = minimumZoomRatio
+    private var zoomStepRatio : Float = (maximumZoomRatio - minimumZoomRatio) / 5.0f
 
     override fun canZoom(): Boolean
     {
-        return (false)
+        val zoomState = cameraXCameraControl.getZoomState()
+        Log.v(TAG, " -=-=-=-=-=- getZoomState() : ${zoomState?.value} -=-=-=-=-=- ")
+        minimumZoomRatio = cameraXCameraControl.getZoomState()?.value?.minZoomRatio ?: 1.0f
+        maximumZoomRatio = cameraXCameraControl.getZoomState()?.value?.maxZoomRatio ?: 1.0f
+        zoomStepRatio = (maximumZoomRatio - minimumZoomRatio) / 5.0f
+        return (true)
     }
 
     override fun updateStatus()
@@ -20,17 +29,17 @@ class CameraZoomLensControl(private val cameraXCameraControl: CameraXCameraContr
 
     override fun getMaximumFocalLength(): Float
     {
-        return (0.0f)
+        return (maximumZoomRatio)
     }
 
     override fun getMinimumFocalLength(): Float
     {
-       return (0.0f)
+       return (minimumZoomRatio)
     }
 
     override fun getCurrentFocalLength(): Float
     {
-        return (0.0f)
+        return (currentZoomRatio)
     }
 
     override fun driveZoomLens(targetLength: Float)
@@ -40,7 +49,31 @@ class CameraZoomLensControl(private val cameraXCameraControl: CameraXCameraContr
 
     override fun driveZoomLens(isZoomIn: Boolean)
     {
-        Log.v(TAG, " driveZoomLens($isZoomIn)")
+        try
+        {
+            if (isZoomIn)
+            {
+                currentZoomRatio += zoomStepRatio
+                if (currentZoomRatio > maximumZoomRatio)
+                {
+                    currentZoomRatio = maximumZoomRatio
+                }
+            }
+            else
+            {
+                currentZoomRatio -= zoomStepRatio
+                if (currentZoomRatio < minimumZoomRatio)
+                {
+                    currentZoomRatio = minimumZoomRatio
+                }
+            }
+            Log.v(TAG, " driveZoomLens(zoomStepRatio = $zoomStepRatio, zoomRatio = $currentZoomRatio, isZoomIn = $isZoomIn)")
+            cameraXCameraControl.setZoomRatio(currentZoomRatio)
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
     }
 
     override fun moveInitialZoomPosition()

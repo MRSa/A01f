@@ -10,6 +10,8 @@ import androidx.camera.camera2.interop.Camera2CameraInfo
 import androidx.camera.core.ExposureState
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory
+import androidx.camera.core.ZoomState
+import androidx.lifecycle.LiveData
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IDisplayInjector
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingControl
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IFocusingModeNotify
@@ -175,6 +177,40 @@ class CameraXCameraControl : IFocusingControl, IDisplayInjector
         }
         return (null)
     }
+
+    fun getZoomState() : LiveData<ZoomState>?
+    {
+        try
+        {
+            if (::cameraXCameraInfo.isInitialized)
+            {
+                return (cameraXCameraInfo.zoomState)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (null)
+    }
+
+    fun setZoomRatio(zoomRatio : Float) : Boolean
+    {
+        try
+        {
+            if (::cameraXCameraInfo.isInitialized)
+            {
+                cameraXCameraControl.setZoomRatio(zoomRatio)
+                return (true)
+            }
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+        return (false)
+    }
+
 
     fun setExposureCompensation(indexValue : Int)
     {
