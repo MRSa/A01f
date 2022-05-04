@@ -7,9 +7,9 @@ import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_FINISHED_REFRESH
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_MENU_ACTION_REFRESH
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_MENU_LAYOUT_DEBUG_VIEW
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_LABEL_FINISHED_REFRESH
+import jp.osdn.gokigen.constants.IApplicationConstantConvert.Companion.ID_MENU_ACTION_REFRESH
+import jp.osdn.gokigen.constants.IApplicationConstantConvert.Companion.ID_MENU_LAYOUT_DEBUG_VIEW
 import java.util.*
 
 class LogCatFragment : androidx.fragment.app.ListFragment()
@@ -38,6 +38,8 @@ class LogCatFragment : androidx.fragment.app.ListFragment()
         return (myView)
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)

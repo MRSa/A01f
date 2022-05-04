@@ -18,8 +18,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import jp.osdn.gokigen.gokigenassets.camera.preference.ICameraPreferenceProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_CAMERA_X_PREVIEW_LAYOUT
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
+import jp.osdn.gokigen.constants.IApplicationConstantConvert.Companion.ID_CAMERA_X_PREVIEW_LAYOUT
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveView
 import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.CameraLiveViewListenerImpl
@@ -31,7 +31,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener:CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(activity, informationReceiver)) : ICameraControl, ICameraShutter
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener:CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(activity, informationReceiver)) : ICameraControl, ICameraShutter, IZoomLensControl
 {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var fileControl : FileControl
@@ -41,7 +41,6 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     private var cameraIsStarted = false
     private val cameraXCameraControl = CameraXCameraControl()
     private val cameraXCameraStatusHolder = CameraXCameraStatusHolder(cameraXCameraControl)
-    private val cameraZoomControl = CameraZoomLensControl(cameraXCameraControl)
     private val clickKeyDownListeners = mutableMapOf<Int, CameraClickKeyDownListener>()
     private val cachePositionProviders = mutableMapOf<Int, ICachePositionProvider>()
 
@@ -350,7 +349,18 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     }
 
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
-    override fun getZoomControl(id: Int): IZoomLensControl { return (cameraZoomControl) }
+    override fun getZoomControl(id: Int): IZoomLensControl { return (this) }
+
+    override fun canZoom(): Boolean { return (false) }
+    override fun updateStatus() { }
+    override fun getMaximumFocalLength(): Float { return (0.0f) }
+    override fun getMinimumFocalLength(): Float { return (0.0f) }
+    override fun getCurrentFocalLength(): Float { return (0.0f) }
+    override fun driveZoomLens(targetLength: Float) { }
+    override fun driveZoomLens(isZoomIn: Boolean) { }
+    override fun moveInitialZoomPosition() { }
+    override fun isDrivingZoomLens(): Boolean { return (false) }
+
 
     private fun getClickKeyDownListener(id : Int) : CameraClickKeyDownListener
     {

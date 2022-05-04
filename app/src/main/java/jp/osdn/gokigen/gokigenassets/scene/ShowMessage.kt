@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert.Companion.ID_AREA_MESSAGE
+import jp.osdn.gokigen.constants.IApplicationConstantConvert.Companion.ID_AREA_MESSAGE
 
 class ShowMessage(private val activity : AppCompatActivity) : IInformationReceiver
 {

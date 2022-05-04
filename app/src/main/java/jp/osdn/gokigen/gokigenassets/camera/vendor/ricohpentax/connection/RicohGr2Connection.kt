@@ -8,10 +8,10 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.*
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CHECK_WIFI
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_DIALOG_BUTTON_RETRY
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_DIALOG_TITLE_CONNECT_FAILED
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CHECK_WIFI
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_DIALOG_BUTTON_NETWORK_SETTINGS
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_DIALOG_BUTTON_RETRY
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_DIALOG_TITLE_CONNECT_FAILED
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 

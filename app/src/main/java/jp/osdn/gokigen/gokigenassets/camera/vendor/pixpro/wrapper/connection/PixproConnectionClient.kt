@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetSocketAddress
@@ -133,7 +133,8 @@ class PixproConnectionClient(private val context: Context, private val interface
                 else
                 {
                     // カメラが見つからない...
-                    cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
+                    cameraStatusReceiver.onStatusNotify(context.getString(
+                        IStringResourceConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
                 }
                 currentTime = System.currentTimeMillis()
             }

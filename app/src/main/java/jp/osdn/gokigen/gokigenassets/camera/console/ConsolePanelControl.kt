@@ -30,8 +30,8 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.T
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.TORCH_MODE
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatus.Companion.WHITE_BALANCE
 import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.status.ICaptureModeReceiver
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_ARRAY_CAMERA_METHOD_VALUE
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_CAMERAX
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_OMDS
 import jp.osdn.gokigen.gokigenassets.constants.ICameraConnectionMethods.Companion.PREFERENCE_CAMERA_METHOD_PANASONIC

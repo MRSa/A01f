@@ -8,7 +8,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_MESSAGE_LABEL_CAPTURE_SUCCESS
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_MESSAGE_LABEL_CAPTURE_SUCCESS
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*

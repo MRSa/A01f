@@ -3,7 +3,7 @@ package jp.osdn.gokigen.gokigenassets.utils.communication
 import android.app.Activity
 import android.os.Environment
 import android.util.Log
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -58,7 +58,7 @@ object SimpleLogDumper
             val extendName = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.getDefault()).format(calendar.time)
             @Suppress("DEPRECATION") val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + "/" + activity.getString(ID_LABEL_APP_LOCATION) + "/"
             val outputFileName = fileNamePrefix + "_" + extendName + ".bin"
-            val filepath = File(directoryPath.toLowerCase(Locale.ROOT), outputFileName.toLowerCase(Locale.ROOT)).path
+            val filepath = File(directoryPath.lowercase(), outputFileName.lowercase()).path
             val outputStream = FileOutputStream(filepath)
             outputStream.write(rx_body, 0, rx_body.size)
             outputStream.flush()

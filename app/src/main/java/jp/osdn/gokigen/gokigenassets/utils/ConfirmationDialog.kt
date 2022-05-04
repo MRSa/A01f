@@ -3,8 +3,8 @@ package jp.osdn.gokigen.gokigenassets.utils
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_DIALOG_BUTTON_LABEL_NEGATIVE
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_DIALOG_BUTTON_LABEL_POSITIVE
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_DIALOG_BUTTON_LABEL_NEGATIVE
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_DIALOG_BUTTON_LABEL_POSITIVE
 
 class ConfirmationDialog : DialogFragment()
 {

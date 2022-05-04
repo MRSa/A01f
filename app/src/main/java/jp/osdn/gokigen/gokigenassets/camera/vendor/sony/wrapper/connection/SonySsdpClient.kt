@@ -6,7 +6,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.ISonyCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.sony.wrapper.SonyCameraDeviceProvider
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import jp.osdn.gokigen.gokigenassets.utils.communication.XmlElement
 import java.net.DatagramPacket
@@ -98,7 +98,8 @@ class SonySsdpClient(private val context: Context, private val callback: ISearch
                 {
                     ddUsn = findParameterValue(ssdpReplyMessage, "USN")
                     Log.v(TAG, "- - - - - - - USN : $ddUsn")
-                    cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CAMERA_RECEIVED_REPLY))
+                    cameraStatusReceiver.onStatusNotify(context.getString(
+                        IStringResourceConstantConvert.ID_STRING_CONNECT_CAMERA_RECEIVED_REPLY))
                     if ((ddUsn.isNotEmpty())&&(!foundDevices.contains(ddUsn))&&(!cameraCoordinator.isAssignedCameraControl(ddUsn)))
                     {
                         val ddLocation = findParameterValue(ssdpReplyMessage, "LOCATION")
@@ -111,7 +112,8 @@ class SonySsdpClient(private val context: Context, private val callback: ISearch
                             val device: ISonyCamera? = searchSonyCameraDevice(ddLocation)
                             if ((device != null)&&(device.hasApiService("camera")))
                             {
-                                cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CAMERA_FOUND) + " " + device.getFriendlyName())
+                                cameraStatusReceiver.onStatusNotify(context.getString(
+                                    IStringResourceConstantConvert.ID_STRING_CONNECT_CAMERA_FOUND) + " " + device.getFriendlyName())
                                 cameraCoordinator.assignCameraControl(number, ddUsn)
                                 callback.onDeviceFound(device)
                                 // カメラが見つかった場合は breakする
@@ -122,14 +124,16 @@ class SonySsdpClient(private val context: Context, private val callback: ISearch
                             {
                                 if (useSmartphoneTransfer && device != null)
                                 {
-                                    cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_CAMERA_FOUND) + " " + device.getFriendlyName() + " (Smartphone Transfer)")
+                                    cameraStatusReceiver.onStatusNotify(context.getString(
+                                        IStringResourceConstantConvert.ID_STRING_CONNECT_CAMERA_FOUND) + " " + device.getFriendlyName() + " (Smartphone Transfer)")
                                     Log.v(TAG, " SMARTPHONE TRANSFER : $ssdpReplyMessage")
                                     callback.onDeviceFound(device)
                                     break
                                 }
 
                                 // カメラが見つからない...
-                                cameraStatusReceiver.onStatusNotify(context.getString(IStringResourceConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
+                                cameraStatusReceiver.onStatusNotify(context.getString(
+                                    IStringResourceConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
                             }
                         }
                     }

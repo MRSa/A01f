@@ -3,9 +3,9 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.omds.wrapper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.connection.OmdsCameraDisconnectSequence
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_LABEL_EXIT_APPLICATION
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_DIALOG_EXIT_POWER_OFF
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_DIALOG_TITLE_CONFIRMATION
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_LABEL_EXIT_APPLICATION
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_DIALOG_EXIT_POWER_OFF
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_DIALOG_TITLE_CONFIRMATION
 import jp.osdn.gokigen.gokigenassets.scene.IChangeSceneBasic
 import jp.osdn.gokigen.gokigenassets.utils.ConfirmationDialog
 

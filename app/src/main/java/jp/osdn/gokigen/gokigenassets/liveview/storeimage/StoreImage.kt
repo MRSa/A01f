@@ -9,9 +9,9 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_SAVE_LOCAL_LOCATION_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import java.io.ByteArrayOutputStream

@@ -7,7 +7,7 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.IOmdsProtocolNotify
 import jp.osdn.gokigen.gokigenassets.camera.vendor.omds.status.IOmdsCommunicationInfo
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import java.lang.Exception
 import java.util.HashMap
@@ -81,7 +81,8 @@ class OmdsCameraConnectSequence(private val context: AppCompatActivity, private 
             }
             else
             {
-                cameraConnection.alertConnectingFailed(context.getString(IStringResourceConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
+                cameraConnection.alertConnectingFailed(context.getString(
+                    IStringResourceConstantConvert.ID_STRING_CAMERA_NOT_FOUND))
             }
         }
         catch (e: Exception)

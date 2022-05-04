@@ -37,7 +37,7 @@
     <string name="pref_for_object_detection_model_file"> Object Detection Model  : </string>
     <string name="object_detection_model_load_failure">Object Detection Model is not Ready…</string>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string name="blank"> </string>
     <string name="app_location">AirA01a</string>
     <string name="dialog_positive_execute">OK</string>

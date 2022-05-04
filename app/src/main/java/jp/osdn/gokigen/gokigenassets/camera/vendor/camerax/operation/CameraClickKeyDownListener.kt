@@ -3,9 +3,8 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.camerax.operation
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraShutter
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.IKeyDown
-import jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert
+import jp.osdn.gokigen.constants.IApplicationConstantConvert
 import jp.osdn.gokigen.gokigenassets.liveview.ICachePositionProvider
 import jp.osdn.gokigen.gokigenassets.utils.imagefile.FileControl
 

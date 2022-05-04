@@ -9,9 +9,9 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraChangeListener
 import jp.osdn.gokigen.gokigenassets.camera.vendor.ICameraControlCoordinator
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCameraHolder
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CAMERA_DETECTED
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_START
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CAMERA_DETECTED
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_START
 
 class PanasonicCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection: ICameraConnection, private val cameraHolder: IPanasonicCameraHolder, private val listener: ICameraChangeListener, cameraCoordinator: ICameraControlCoordinator, number : Int) : Runnable, PanasonicSsdpClient.ISearchResultCallback
 {

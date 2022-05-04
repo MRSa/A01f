@@ -6,9 +6,9 @@ import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
 import jp.osdn.gokigen.gokigenassets.camera.vendor.theta.status.IThetaSessionIdNotifier
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CAMERA_CONNECT_RESPONSE_NG
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CAMERA_NOT_FOUND
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CONNECTED
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_CAMERA_CONNECT_RESPONSE_NG
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_CAMERA_NOT_FOUND
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CONNECTED
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 import org.json.JSONObject
 

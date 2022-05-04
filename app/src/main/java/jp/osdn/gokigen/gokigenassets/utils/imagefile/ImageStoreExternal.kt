@@ -13,10 +13,10 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_MESSAGE_LABEL_CAPTURE_SUCCESS
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_EXTERNAL_STORAGE_LOCATION
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_LOCATION
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_MESSAGE_LABEL_CAPTURE_SUCCESS
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_EXTERNAL_STORAGE_LOCATION
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_EXTERNAL_STORAGE_LOCATION_DEFAULT_VALUE
 import jp.osdn.gokigen.gokigenassets.preference.PreferenceAccessWrapper
 import java.io.File
 import java.io.OutputStream

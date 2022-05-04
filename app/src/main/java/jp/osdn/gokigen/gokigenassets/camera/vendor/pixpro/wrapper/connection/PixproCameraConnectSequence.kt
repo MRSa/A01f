@@ -29,7 +29,7 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messag
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashOff
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.command.messages.specific.PixproFlashOn
 import jp.osdn.gokigen.gokigenassets.camera.vendor.pixpro.wrapper.status.PixproStatusChecker
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert
 
 class PixproCameraConnectSequence(private val context: AppCompatActivity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection : ICameraConnection, private val interfaceProvider : IPixproInternalInterfaces, private val statusChecker: PixproStatusChecker) : Runnable, IPixproCommandCallback, IPixproMessages, PixproConnectionClient.ISearchResultCallback
 {
@@ -246,7 +246,8 @@ class PixproCameraConnectSequence(private val context: AppCompatActivity, privat
 
     private fun startConnectSequence()
     {
-        interfaceProvider.getInformationReceiver().updateMessage(context.getString(IStringResourceConstantConvert.ID_STRING_CONNECT_START),
+        interfaceProvider.getInformationReceiver().updateMessage(context.getString(
+            IStringResourceConstantConvert.ID_STRING_CONNECT_START),
             isBold = false,
             isColor = false,
             color = 0

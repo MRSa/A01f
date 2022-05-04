@@ -6,9 +6,9 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemLongClickListener
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_NAME
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_MESSAGE_CONFIRMATION_FOR_EXPORT_LOG
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_LABEL_TITLE_CONFIRMATION_FOR_EXPORT_LOG
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_LABEL_APP_NAME
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_LABEL_MESSAGE_CONFIRMATION_FOR_EXPORT_LOG
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_LABEL_TITLE_CONFIRMATION_FOR_EXPORT_LOG
 import jp.osdn.gokigen.gokigenassets.utils.ConfirmationDialog
 
 class LogCatExporter(private val activity: Activity) : OnItemLongClickListener

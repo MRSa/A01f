@@ -37,7 +37,7 @@
     <string name="pref_for_object_detection_model_file">オブジェクト検出モデル : </string>
     <string name="object_detection_model_load_failure">オブジェクト検出モデルが読み込めませんでした。</string>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string name="blank"> </string>
     <string name="app_location">AirA01a</string>
     <string name="dialog_positive_execute">OK</string>

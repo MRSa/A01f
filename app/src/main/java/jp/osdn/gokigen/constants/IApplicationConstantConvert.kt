@@ -1,4 +1,4 @@
-package jp.osdn.gokigen.gokigenassets.constants
+package jp.osdn.gokigen.constants
 
 import net.osdn.gokigen.objectdetection.a01f.R
 

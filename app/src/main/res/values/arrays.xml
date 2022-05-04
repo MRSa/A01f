@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string-array name="connection_method">
         <item>Selected Image (file)</item>
         <item>Internal Camera</item>
@@ -18,7 +18,7 @@
         -->
     </string-array>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string-array name="connection_method_value">
         <item>EXAMPLE</item>
         <item>camerax</item>
@@ -35,17 +35,17 @@
         -->
     </string-array>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string-array name="connection_sequence">
         <item>TYPE0</item>
-        <item>TYPE1</item>
+        <item tools:ignore="Typos">TYPE1</item>
         <item>TYPE2</item>
         <item>TYPE3</item>
         <item>TYPE4</item>
         <item>TYPE5</item>
     </string-array>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string-array name="connection_sequence_value">
         <item>0</item>
         <item>1</item>
@@ -55,7 +55,7 @@
         <item>5</item>
     </string-array>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string-array name="self_timer_count">
         <item>OFF</item>
         <item>3 Sec.</item>
@@ -64,7 +64,7 @@
         <item>15 Sec.</item>
     </string-array>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string-array name="self_timer_count_value">
         <item>0</item>
         <item>3</item>
@@ -73,13 +73,13 @@
         <item>15</item>
     </string-array>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string-array name="array_show_grid">
         <item>OFF</item>
         <item>ON</item>
     </string-array>
 
-    <!--  Use for jp.osdn.gokigen.gokigenassets.constants.IApplicationConstantConvert -->
+    <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->
     <string-array name="array_show_grid_value">
         <item>0</item>
         <item>1</item>

@@ -3,7 +3,7 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.ricohpentax.connection
 import android.app.Activity
 import android.util.Log
 import androidx.preference.PreferenceManager
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_RICOH_GR2_LCD_SLEEP
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_RICOH_GR2_LCD_SLEEP
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
 

@@ -168,7 +168,7 @@ class OmdsLiveViewControl(private val imageDataReceiver: IImageDataReceiver,
             //Log.v(TAG, " RECV.: len:$dataLength, offset: $offset, copy: ${dataLength - offset} size: $receivedImageBufferOffset   [seq.]:$sequenceNumber : $nextSequenceNumber")
             if ((isFinished)&&(sequenceNumber == nextSequenceNumber))
             {
-                Log.v(TAG, " RECV.IMAGE : Size:${receivedImageBufferOffset}")
+                //Log.v(TAG, " RECV.IMAGE : Size:${receivedImageBufferOffset}")
                 imageDataReceiver.onUpdateLiveView(receivedImageBuffer.copyOfRange(0, receivedImageBufferOffset), null)
                 receivedImageBufferOffset = 0
             }

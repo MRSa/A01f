@@ -6,10 +6,10 @@ import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnection
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_RICOH_GR2_LCD_SLEEP
-import jp.osdn.gokigen.gokigenassets.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_USE_GR2_SPECIAL_COMMAND
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CAMERA_NOT_FOUND
-import jp.osdn.gokigen.gokigenassets.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CONNECTED
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_RICOH_GR2_LCD_SLEEP
+import jp.osdn.gokigen.constants.IPreferenceConstantConvert.Companion.ID_PREFERENCE_USE_GR2_SPECIAL_COMMAND
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_CAMERA_NOT_FOUND
+import jp.osdn.gokigen.constants.IStringResourceConstantConvert.Companion.ID_STRING_CONNECT_CONNECTED
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
 class RicohGr2CameraConnectSequence(private val context: Activity, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraConnection: ICameraConnection, private val gr2CommandNotify: IUseGR2CommandNotify, private val executeUrl : String = "http://192.168.0.1") : Runnable
