@@ -156,7 +156,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
             {
                 if (!::objectDetectionModel2nd.isInitialized)
                 {
-                    objectDetectionModel2nd = ObjectDetectionModelReader(activity, id = 1, maxObject, 1.1f, 5, 2.0f, 0.5f)
+                    objectDetectionModel2nd = ObjectDetectionModelReader(activity, id = 1, maxObject, 1.1f, 4, 2.0f, 0.5f)
                     drawers.addAnotherDrawer(objectDetectionModel2nd)
                 }
                 if (!objectDetectionModel2nd.readObjectModel(modelUri))

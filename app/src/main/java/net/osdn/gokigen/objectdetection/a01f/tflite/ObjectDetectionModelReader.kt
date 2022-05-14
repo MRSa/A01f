@@ -224,13 +224,13 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
             1 -> Color.rgb(0, 250, 0)      // green
             2 -> Color.rgb(255, 0, 255)    // magenta
             3 -> Color.rgb(0, 255, 255)    // aqua
-            4 -> Color.rgb(255,165,0)      // organge
-            5 -> Color.rgb(127, 255, 212)   // aquamarine
-            6 -> Color.rgb(255, 215, 0)     // gold
+            4 -> Color.rgb(127, 255, 212)   // aquamarine
+            5 -> Color.rgb(255,165,0)       // organge
+            6 -> Color.rgb(0, 0, 255)       // blue
             7 -> Color.rgb(144, 238, 144)   // lightgreen
             8 -> Color.rgb(138, 43, 226)    // blueviolet
             9 -> Color.rgb(250, 128, 114)   // salmon
-            10 -> Color.rgb(0, 0, 255)      // blue
+            10 -> Color.rgb(255, 215, 0)     // gold
             else -> Color.WHITE
         })
     }
