@@ -376,9 +376,32 @@ class PreferenceValueInitializer() : IPreferenceValueInitializer
                 editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX, IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE)
             }
 
-            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE))
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_0))
             {
-                editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE)
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_0, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE_0)
+            }
+
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_0))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_0, IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_DEFAULT_VALUE_0)
+            }
+
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_1))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_1, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE_1)
+            }
+
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_1))
+            {
+                editor.putString(IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_1, IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_DEFAULT_VALUE_1)
+            }
+
+            if (!items.containsKey(IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL))
+            {
+                editor.putBoolean(
+                    IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL,
+                    IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL_DEFAULT_VALUE
+                )
             }
 
             editor.apply()

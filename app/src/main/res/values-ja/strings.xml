@@ -34,7 +34,8 @@
     <string name="pref_instruction_manual_url">https://osdn.net/projects/gokigen/wiki/A01f</string>
     <string name="pref_privacy_policy_url">https://osdn.net/projects/gokigen/wiki/PrivacyPolicy</string>
 
-    <string name="pref_for_object_detection_model_file">オブジェクト検出モデル : </string>
+    <string name="pref_for_object_detection_model_file">オブジェクト検出モデル:</string>
+    <string name="pref_for_object_detection_model_file2">オブジェクト検出モデル(2):</string>
     <string name="object_detection_model_load_failure">オブジェクト検出モデルが読み込めませんでした。</string>
 
     <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->

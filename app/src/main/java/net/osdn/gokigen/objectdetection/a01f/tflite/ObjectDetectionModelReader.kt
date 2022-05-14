@@ -27,7 +27,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
 
-class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val max_detect_objects: Int = 10, private val confidence_level: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
+class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val id: Int = 0, private val max_detect_objects: Int = 10, private val confidence_level: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
 {
     private val contentResolver = activity.contentResolver
     private lateinit var objectDetector: ObjectDetector
@@ -46,7 +46,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 readInternalObjectModel()
                 return (true)
             }
-            Log.v(TAG, " Requested URI : $uri")
+            Log.v(TAG, " $id Requested URI : $uri")
 
             var size = 0
             val cursor = contentResolver.query(uri, arrayOf(MediaStore.MediaColumns.SIZE), null, null, null)
@@ -68,7 +68,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 //objectDetector = ObjectDetector.createFromBufferAndOptions(ByteBuffer.wrap(data), options)
             }
             isObjectModelReady = true
-            Log.v(TAG, " ----- ObjectDetector is Ready! -----")
+            Log.v(TAG, " ----- ObjectDetector($id) is Ready! -----")
             return (true)
         }
         catch (e: Exception)
@@ -130,7 +130,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
 
             if (canvas != null)
             {
-                Log.v(TAG, "onDraw...")
+                Log.v(TAG, "onDraw($id)...")
 
                 val paintText = Paint()
                 paintText.strokeWidth = 1.0f
@@ -205,7 +205,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                         }
                     }
                 }
-                Log.v(TAG, " ----- DETECTED OBJECT : $count")
+                Log.v(TAG, " ----- DETECTED OBJECT($id) : $count")
             }
         }
         catch (e: Throwable)
@@ -236,13 +236,13 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
             {
                 val bitmap = imageProvider.getImage()
                 targetRectF = RectF(0.0f, 0.0f, (bitmap.width).toFloat(), (bitmap.height).toFloat())
-                Log.v(TAG, " - - - - Object Detection (${targetRectF})")
+                Log.v(TAG, " - - - - Object Detection[$id] (${targetRectF})")
                 detectResults = objectDetector.detect(TensorImage.fromBitmap(bitmap))
-                Log.v(TAG, " - - - - Object Detection (results: ${detectResults.size})")
+                Log.v(TAG, " - - - - Object Detection[$id] (results: ${detectResults.size})")
             }
             else
             {
-                Log.v(TAG, " - - - - The object detection model is not ready...")
+                Log.v(TAG, " - - - - The object detection model($id) is not ready...")
             }
         }
         catch (e: Throwable)

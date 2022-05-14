@@ -50,6 +50,10 @@ fun PreferenceScreen(navController: NavHostController, prefsModel: A01fPrefsMode
             Spacer(Modifier.size(padding))
             Divider(color = Color.LightGray, thickness = 1.dp)
             Spacer(Modifier.size(padding))
+            FilePickerForObjectDetectionModel2(prefsModel)
+            Spacer(Modifier.size(padding))
+            Divider(color = Color.LightGray, thickness = 1.dp)
+            Spacer(Modifier.size(padding))
             CameraConnectionMethodDropdown(prefsModel, vibrator)
             Spacer(Modifier.size(padding))
             Divider(color = Color.LightGray, thickness = 1.dp)
@@ -150,15 +154,45 @@ fun FilePickerForObjectDetectionModel(prefsModel: A01fPrefsModel)
     val filePickerLauncher = rememberLauncherForActivityResult(GetPickFilePermission()) { modelUri ->
         if (modelUri != null)
         {
-            Log.v("File Pick", "Picked file URI: $modelUri")
+            Log.v("File Pick", "Picked file  URI: $modelUri")
             scope.launch {
-                prefsModel.setObjectDetectionFileModel(modelUri)
+                prefsModel.setObjectDetectionFileModel(modelUri, 0)
             }
         }
     }
 
     Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(all = 10.dp)) {
-        Text(" " + stringResource(id = R.string.pref_for_object_detection_model_file) + " " + prefsModel.getObjectDetectionFileName(), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") }, fontSize = with(density) { 18.dp.toSp() })
+        Text(stringResource(id = R.string.pref_for_object_detection_model_file) + " " + prefsModel.getObjectDetectionFileName(0), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") }, fontSize = with(density) { 18.dp.toSp() })
+    }
+}
+
+@Composable
+fun FilePickerForObjectDetectionModel2(prefsModel: A01fPrefsModel)
+{
+    val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
+    val useSecondObjectDetection = prefsModel.useSecondObjectDetection.observeAsState(initial = prefsModel.useSecondObjectDetection.value ?: false)
+
+    val filePickerLauncher = rememberLauncherForActivityResult(GetPickFilePermission()) { modelUri ->
+        if (modelUri != null)
+        {
+            Log.v("File Pick", "Picked file (2nd) URI: $modelUri")
+            scope.launch {
+                prefsModel.setObjectDetectionFileModel(modelUri, 1)
+            }
+        }
+    }
+
+    Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(all = 10.dp)) {
+            Checkbox(
+                checked = useSecondObjectDetection.value,
+                onCheckedChange = {
+                    scope.launch {
+                        prefsModel.setUseSecondObjectDetection(!useSecondObjectDetection.value)
+                    }
+                })
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(stringResource(id = R.string.pref_for_object_detection_model_file2) + " " + prefsModel.getObjectDetectionFileName(1), modifier = Modifier.clickable { filePickerLauncher.launch("*/*") }, fontSize = with(density) { 18.dp.toSp() })
     }
 }
 

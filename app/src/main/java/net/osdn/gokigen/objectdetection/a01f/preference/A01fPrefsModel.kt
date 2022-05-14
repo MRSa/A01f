@@ -20,10 +20,13 @@ class A01fPrefsModel : ViewModel()
     private val cameraConnectionMethodIndex : MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     private val connectionStatus : MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus> by lazy { MutableLiveData<ICameraConnectionStatus.CameraConnectionStatus>() }
 
+    private val useSecondObjectDetectionModel : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+
     val captureBothLvAndCamera: LiveData<Boolean> = captureLiveViewImage
     val isCameraConnectionMethodExpanded: LiveData<Boolean> = cameraConnectionMethodExpanded
     val cameraConnectionMethodSelectionIndex: LiveData<Int> = cameraConnectionMethodIndex
     val cameraConnectionStatus: LiveData<ICameraConnectionStatus.CameraConnectionStatus> = connectionStatus
+    val useSecondObjectDetection: LiveData<Boolean> = useSecondObjectDetectionModel
 
     fun initializePreferences(activity: AppCompatActivity)
     {
@@ -39,6 +42,10 @@ class A01fPrefsModel : ViewModel()
                 IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX,
                 IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE
             ))?.toInt()
+            useSecondObjectDetectionModel.value = preference.getBoolean(
+                IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL,
+                IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL_DEFAULT_VALUE
+            )
         }
         catch (e: Exception)
         {
@@ -53,6 +60,21 @@ class A01fPrefsModel : ViewModel()
         {
             val editor: SharedPreferences.Editor = preference.edit()
             editor.putBoolean(IPreferencePropertyAccessor.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, value)
+            editor.apply()
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    fun setUseSecondObjectDetection(value: Boolean)
+    {
+        useSecondObjectDetectionModel.value = value
+        try
+        {
+            val editor: SharedPreferences.Editor = preference.edit()
+            editor.putBoolean(IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL, value)
             editor.apply()
         }
         catch (e: Exception)
@@ -87,13 +109,21 @@ class A01fPrefsModel : ViewModel()
         //connectionStatus.value = value
     }
 
-    fun getObjectDetectionFileName() : String
+    fun getObjectDetectionFileName(number: Int = 0) : String
     {
         if (::preference.isInitialized)
         {
             try
             {
-                val modeFileString = preference.getString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE) ?: ""
+                val modeFileString =
+                    if (number == 0)
+                    {
+                        preference.getString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_0, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE_0) ?: ""
+                    }
+                    else
+                    {
+                        preference.getString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_1, IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE_1) ?: ""
+                    }
                 val fileName = modeFileString.substring(modeFileString.lastIndexOf("%2F") + "%2f".length)
                 if (fileName.isNotEmpty())
                 {
@@ -108,7 +138,7 @@ class A01fPrefsModel : ViewModel()
         return (" (aohina)")
     }
 
-    fun setObjectDetectionFileModel(uri: Uri)
+    fun setObjectDetectionFileModel(uri: Uri, number: Int = 0)
     {
         if (::preference.isInitialized)
         {
@@ -124,7 +154,16 @@ class A01fPrefsModel : ViewModel()
             try
             {
                 val editor: SharedPreferences.Editor = preference.edit()
-                editor.putString(IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE, uri.toString())
+                val key =
+                    if (number == 0)
+                    {
+                        IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_0
+                    }
+                    else
+                    {
+                        IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_1
+                    }
+                editor.putString(key, uri.toString())
                 editor.apply()
             }
             catch (e: Exception)

@@ -34,7 +34,8 @@
     <string name="pref_instruction_manual_url">https://osdn.net/projects/gokigen/wiki/A01f</string>
     <string name="pref_privacy_policy_url">https://osdn.net/projects/gokigen/wiki/PrivacyPolicy</string>
 
-    <string name="pref_for_object_detection_model_file"> Object Detection Model  : </string>
+    <string name="pref_for_object_detection_model_file">Object Detection Model:</string>
+    <string name="pref_for_object_detection_model_file2">ObjectDetection Model(2):</string>
     <string name="object_detection_model_load_failure">Object Detection Model is not Ready…</string>
 
     <!--  Use for jp.osdn.gokigen.constants.IApplicationConstantConvert -->

@@ -70,8 +70,24 @@ interface IPreferencePropertyAccessor
         const val PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE = "1"
 
         // --- PREFERENCE FOR OBJECT DETECTION MODEL FILE
-        const val PREFERENCE_OBJECT_DETECTION_MODEL_FILE  = "object_detection_model_file"
-        const val PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE  = ""
+        const val PREFERENCE_OBJECT_DETECTION_MODEL_FILE_0  = "object_detection_model_file"
+        const val PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE_0  = ""
+
+        // --- PREFERENCE NUMBER OF OBJECT DETECTION
+        const val PREFERENCE_NUMBER_OF_OBJECT_DETECTION_0  = "number_of_object_detection"
+        const val PREFERENCE_NUMBER_OF_OBJECT_DETECTION_DEFAULT_VALUE_0  = "10"
+
+        // --- PREFERENCE FOR OBJECT DETECTION MODEL FILE (2nd)
+        const val PREFERENCE_OBJECT_DETECTION_MODEL_FILE_1  = "object_detection_model_file1"
+        const val PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE_1  = ""
+
+        // --- PREFERENCE NUMBER OF OBJECT DETECTION (2nd)
+        const val PREFERENCE_NUMBER_OF_OBJECT_DETECTION_1  = "number_of_object_detection1"
+        const val PREFERENCE_NUMBER_OF_OBJECT_DETECTION_DEFAULT_VALUE_1  = "10"
+
+        // --- USE SECOND OBJECT DETECTION MODEL
+        const val PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL = "use_second_object_detection_model"
+        const val PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL_DEFAULT_VALUE = false
 
         // --- CAMERA 1  PREFERENCES
         const val PREFERENCE_CAMERA_METHOD_1 = "camera_method1"

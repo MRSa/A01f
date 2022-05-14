@@ -17,26 +17,53 @@ import net.osdn.gokigen.objectdetection.a01f.tflite.ObjectDetectionModelReader
 
 class CameraLiaison(private val activity: AppCompatActivity, private val informationNotify: IInformationReceiver, private val vibrator : IVibrator, statusReceiver : ICameraStatusReceiver)
 {
-    private val objectDetectionModel = ObjectDetectionModelReader(activity, 10, 0.5f)
+    private val drawers = AnotherDrawerHolder()
     private val cameraProvider = CameraProvider(activity, informationNotify, vibrator, statusReceiver)
     private lateinit var cameraControl: ICameraControl  // = cameraProvider.getCameraXControl()
+    private lateinit var objectDetectionModel: ObjectDetectionModelReader
+    private lateinit var objectDetectionModel2nd : ObjectDetectionModelReader
 
     init
     {
         try
         {
             val preference = PreferenceManager.getDefaultSharedPreferences(activity)
-            val connectionIndex = try {
-                (preference.getString(
-                    IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX,
-                    IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE
-                ))?.toInt() ?: 2
+            val connectionIndex =
+                try
+                {
+                    (preference.getString(
+                        IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX,
+                        IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX_DEFAULT_VALUE
+                    ))?.toInt() ?: 2
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                    3
+                }
+            val is2ndDetection: Boolean =
+                try
+                {
+                    preference.getBoolean(IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL, IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL_DEFAULT_VALUE)
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                    false
+                }
+            try
+            {
+                initializeObjectDetectionModel(0)
+                if (is2ndDetection)
+                {
+                    initializeObjectDetectionModel(1)
+                }
             }
             catch (e: Exception)
             {
                 e.printStackTrace()
-                3
             }
+
             cameraControl = try
             {
                 val items = activity.resources.getStringArray(R.array.connection_method_value)
@@ -47,8 +74,14 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
                 e.printStackTrace()
                 cameraProvider.getCameraXControl()
             }
+            Log.v(TAG, " setImageProvider... [2nd:$is2ndDetection]")
             cameraProvider.setRefresher(objectDetectionModel)
             objectDetectionModel.setImageProvider(cameraProvider.getImageProvider())
+            if ((is2ndDetection)&&(::objectDetectionModel2nd.isInitialized))
+            {
+                cameraProvider.setRefresher(objectDetectionModel2nd)
+                objectDetectionModel2nd.setImageProvider(cameraProvider.getImageProvider())
+            }
             cameraControl.initialize()
         }
         catch (e: Exception)
@@ -57,23 +90,91 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
         }
     }
 
-    fun initialize()
+    private fun initializeObjectDetectionModel(number: Int = 0)
     {
         try
         {
             val preference = PreferenceManager.getDefaultSharedPreferences(activity)
-            val modelUri = (preference.getString(
-                IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE,
-                IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE) ?: "").toUri()
-            if (!objectDetectionModel.readObjectModel(modelUri))
+            val key =
+                if (number == 0)
+                {
+                    IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_0
+                }
+                else
+                {
+                    IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_1
+                }
+            val defaultValue =
+                if (number == 0)
+                {
+                    IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE_0
+                }
+                else
+                {
+                    IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_DEFAULT_VALUE_1
+                }
+
+            val maxObjectKey =
+                if (number == 0)
+                {
+                    IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_0
+                }
+                else
+                {
+                    IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_1
+                }
+            val maxObjectDefaultValue =
+                if (number == 0)
+                {
+                    IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_DEFAULT_VALUE_0
+                }
+                else
+                {
+                    IPreferencePropertyAccessor.PREFERENCE_NUMBER_OF_OBJECT_DETECTION_DEFAULT_VALUE_1
+                }
+            var maxObject: Int = (preference.getString(maxObjectKey, maxObjectDefaultValue) ?: "10").toInt()
+            if ((maxObject <= 0)||(maxObject >= 100))
             {
-                Log.v(TAG, " -=-=-=-=-=-=-=-=-=-=-=-=- Object Detection Model Read Failure... $modelUri  -=-=-=-=-=-=-=-=-=-=-=-=- ")
+                // オブジェクトの検出数は 1～99 までにする、その範囲を逸脱していた場合は 10 にする
+                maxObject = 10
+            }
+            val modelUri = (preference.getString(key, defaultValue) ?: "").toUri()
+            if (number == 0)
+            {
+                if (!::objectDetectionModel.isInitialized)
+                {
+                    objectDetectionModel = ObjectDetectionModelReader(activity, id = 0, maxObject, 0.5f)
+                    drawers.addAnotherDrawer(objectDetectionModel)
+                }
+                if (!objectDetectionModel.readObjectModel(modelUri))
+                {
+                    Log.v(TAG, " -=-=-=-=-=-=-=-=-=-=-=-=- Object Detection Model Read Failure... $modelUri  -=-=-=-=-=-=-=-=-=-=-=-=- ")
+                }
+            }
+            else
+            {
+                if (!::objectDetectionModel2nd.isInitialized)
+                {
+                    objectDetectionModel2nd = ObjectDetectionModelReader(activity, id = 1, maxObject, 0.5f)
+                    drawers.addAnotherDrawer(objectDetectionModel2nd)
+                }
+                if (!objectDetectionModel2nd.readObjectModel(modelUri))
+                {
+                    Log.v(TAG, " -=-=-=-=-=-=-=-=-=-=-=-=- Object Detection Model(2nd) Read Failure... $modelUri  -=-=-=-=-=-=-=-=-=-=-=-=- ")
+                }
             }
         }
         catch (e: Exception)
         {
             e.printStackTrace()
         }
+    }
+
+
+
+
+    fun initialize()
+    {
         try
         {
             val msg = activity.getString(R.string.app_name)
@@ -107,7 +208,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
 
     fun getCameraControl() : ICameraControl { return (cameraControl) }
     fun getVibrator() : IVibrator { return (vibrator) }
-    fun getAnotherDrawer() : IAnotherDrawer { return (objectDetectionModel) }
+    fun getAnotherDrawer() : IAnotherDrawer { return (drawers) }
 
     fun handleKeyDown(keyCode: Int, event: KeyEvent): Boolean
     {
