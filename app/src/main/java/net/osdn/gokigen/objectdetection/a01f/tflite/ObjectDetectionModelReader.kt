@@ -27,7 +27,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
 
-class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val id: Int = 0, private val max_detect_objects: Int = 10, private val confidence_level: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
+class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val id: Int = 0, private val max_detect_objects: Int = 10, private val textPositionOffset: Float = 1.0f, private val colorOffset: Int = 0, private val strokeWidth: Float = 3.0f, private val confidence_level: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
 {
     private val contentResolver = activity.contentResolver
     private lateinit var objectDetector: ObjectDetector
@@ -140,7 +140,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 paintText.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK)
 
                 val paintRect = Paint()
-                paintRect.strokeWidth = 3.0f
+                paintRect.strokeWidth = strokeWidth
                 paintRect.style = Paint.Style.STROKE
                 paintRect.isAntiAlias = true
                 paintRect.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK)
@@ -166,8 +166,8 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                             {
                                 canvas.drawText(
                                     drawText,
-                                    r.boundingBox.centerY() * posWidth + imageRectF.left,
-                                    r.boundingBox.centerX() * posHeight + imageRectF.top,
+                                    r.boundingBox.centerX() * posWidth + imageRectF.left,
+                                    r.boundingBox.centerY() * posHeight * textPositionOffset + imageRectF.top,
                                     paintText
                                 )
 
@@ -188,7 +188,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                                 canvas.drawText(
                                     drawText,
                                     r.boundingBox.centerX() * posWidth + imageRectF.left,
-                                    r.boundingBox.centerY() * posHeight + imageRectF.top,
+                                    r.boundingBox.centerY() * posHeight  * textPositionOffset + imageRectF.top,
                                     paintText
                                 )
                                 canvas.drawRoundRect(
@@ -217,13 +217,20 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
 
     private fun decideColor(index: Int) : Int
     {
-        val choice = index % 4
+        val choice = ((index + colorOffset) % 11)
         return (when (choice)
         {
-            0 -> Color.BLUE
-            1 -> Color.GREEN
-            2 -> Color.MAGENTA
-            3 -> Color.CYAN
+            0 -> Color.rgb(255, 20, 147)   // deeppink
+            1 -> Color.rgb(0, 250, 0)      // green
+            2 -> Color.rgb(255, 0, 255)    // magenta
+            3 -> Color.rgb(0, 255, 255)    // aqua
+            4 -> Color.rgb(255,165,0)      // organge
+            5 -> Color.rgb(127, 255, 212)   // aquamarine
+            6 -> Color.rgb(255, 215, 0)     // gold
+            7 -> Color.rgb(144, 238, 144)   // lightgreen
+            8 -> Color.rgb(138, 43, 226)    // blueviolet
+            9 -> Color.rgb(250, 128, 114)   // salmon
+            10 -> Color.rgb(0, 0, 255)      // blue
             else -> Color.WHITE
         })
     }
