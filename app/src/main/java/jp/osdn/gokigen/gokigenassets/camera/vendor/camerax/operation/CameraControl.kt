@@ -31,7 +31,7 @@ import jp.osdn.gokigen.gokigenassets.scene.IVibrator
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener:CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(activity, informationReceiver)) : ICameraControl, ICameraShutter, IZoomLensControl
+class CameraControl(private val activity : AppCompatActivity, private val preference: ICameraPreferenceProvider, private val vibrator : IVibrator, private val informationReceiver : IInformationReceiver, private val statusReceiver : ICameraStatusReceiver, private val number : Int = 0, private val liveViewListener:CameraLiveViewListenerImpl = CameraLiveViewListenerImpl(activity, informationReceiver)) : ICameraControl, ICameraShutter
 {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var fileControl : FileControl
@@ -41,6 +41,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     private var cameraIsStarted = false
     private val cameraXCameraControl = CameraXCameraControl()
     private val cameraXCameraStatusHolder = CameraXCameraStatusHolder(cameraXCameraControl)
+    private val cameraXZoomControl = CameraZoomLensControl(cameraXCameraControl)
     private val clickKeyDownListeners = mutableMapOf<Int, CameraClickKeyDownListener>()
     private val cachePositionProviders = mutableMapOf<Int, ICachePositionProvider>()
 
@@ -349,18 +350,7 @@ class CameraControl(private val activity : AppCompatActivity, private val prefer
     }
 
     override fun getCameraShutter(id: Int): ICameraShutter { return (this) }
-    override fun getZoomControl(id: Int): IZoomLensControl { return (this) }
-
-    override fun canZoom(): Boolean { return (false) }
-    override fun updateStatus() { }
-    override fun getMaximumFocalLength(): Float { return (0.0f) }
-    override fun getMinimumFocalLength(): Float { return (0.0f) }
-    override fun getCurrentFocalLength(): Float { return (0.0f) }
-    override fun driveZoomLens(targetLength: Float) { }
-    override fun driveZoomLens(isZoomIn: Boolean) { }
-    override fun moveInitialZoomPosition() { }
-    override fun isDrivingZoomLens(): Boolean { return (false) }
-
+    override fun getZoomControl(id: Int): IZoomLensControl { return (cameraXZoomControl) }
 
     private fun getClickKeyDownListener(id : Int) : CameraClickKeyDownListener
     {
