@@ -12,6 +12,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraStatusReceiver
@@ -37,6 +38,9 @@ class MainActivity : AppCompatActivity(), IVibrator, ICameraStatusReceiver
 
         try
         {
+            ///////// SHOW SPLASH SCREEN /////////
+            installSplashScreen()
+
             ///////// INITIALIZATION /////////
             cameraLiaison  = CameraLiaison(this, showMessage, this, this)
             PreferenceValueInitializer().initializePreferences(this)

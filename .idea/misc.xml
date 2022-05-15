@@ -4,9 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.156" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_baseline_camera_24.xml" value="0.151" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_baseline_camera_alt_24.xml" value="0.151" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_baseline_cloud_24.xml" value="0.151" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_baseline_dashboard_24.xml" value="0.156" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_baseline_format_list_bulleted_24.xml" value="0.156" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.156" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.151" />
+        <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_baseline_wifi_24.xml" value="0.151" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_launcher_background.xml" value="0.156" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.156" />
         <entry key="..\:/Users/MRSa/AndroidStudioProjects/android/A01f/app/src/main/res/layout/camera_capture.xml" value="0.315625" />
