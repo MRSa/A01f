@@ -1,7 +1,6 @@
 package net.osdn.gokigen.objectdetection.a01f.liaison
 
 import android.graphics.Color
-import android.graphics.Paint
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -54,10 +53,14 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
                 }
             try
             {
-                initializeObjectDetectionModel(0)
                 if (is2ndDetection)
                 {
-                    initializeObjectDetectionModel(1)
+                    initializeObjectDetectionModel(0, "1:")
+                    initializeObjectDetectionModel(1, "2:")
+                }
+                else
+                {
+                    initializeObjectDetectionModel(0, "")
                 }
             }
             catch (e: Exception)
@@ -91,7 +94,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
         }
     }
 
-    private fun initializeObjectDetectionModel(number: Int = 0)
+    private fun initializeObjectDetectionModel(number: Int = 0, objectHeaderString: String = "")
     {
         try
         {
@@ -144,7 +147,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
             {
                 if (!::objectDetectionModel.isInitialized)
                 {
-                    objectDetectionModel = ObjectDetectionModelReader(activity, id = 0, maxObject, 1.0f, 0, 3.0f, 0.5f)
+                    objectDetectionModel = ObjectDetectionModelReader(activity, id = 0, maxObject, 1.0f, 0, 3.0f, objectHeaderString,0.5f)
                     drawers.addAnotherDrawer(objectDetectionModel)
                 }
                 if (!objectDetectionModel.readObjectModel(modelUri))
@@ -156,7 +159,7 @@ class CameraLiaison(private val activity: AppCompatActivity, private val informa
             {
                 if (!::objectDetectionModel2nd.isInitialized)
                 {
-                    objectDetectionModel2nd = ObjectDetectionModelReader(activity, id = 1, maxObject, 1.1f, 4, 2.0f, 0.5f)
+                    objectDetectionModel2nd = ObjectDetectionModelReader(activity, id = 1, maxObject, 1.1f, 4, 3.0f, objectHeaderString, 0.5f)
                     drawers.addAnotherDrawer(objectDetectionModel2nd)
                 }
                 if (!objectDetectionModel2nd.readObjectModel(modelUri))

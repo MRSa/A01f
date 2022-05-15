@@ -1,10 +1,7 @@
 package net.osdn.gokigen.objectdetection.a01f.tflite
 
 import android.content.SharedPreferences
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -27,7 +24,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
 
-class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val id: Int = 0, private val max_detect_objects: Int = 10, private val textPositionOffset: Float = 1.0f, private val colorOffset: Int = 0, private val strokeWidth: Float = 3.0f, private val confidence_level: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
+class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val id: Int = 0, private val max_detect_objects: Int = 10, private val textPositionOffset: Float = 1.0f, private val colorOffset: Int = 0, private val strokeWidth: Float = 3.0f, private val objectHeader: String = "", private val confidence_level: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
 {
     private val contentResolver = activity.contentResolver
     private lateinit var objectDetector: ObjectDetector
@@ -144,6 +141,10 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 paintRect.style = Paint.Style.STROKE
                 paintRect.isAntiAlias = true
                 paintRect.setShadowLayer(5.0f, 3.0f, 3.0f, Color.BLACK)
+                if (id > 0)
+                {
+                    paintRect.pathEffect = DashPathEffect(floatArrayOf(15.0f, 15.0f), 0.0f)
+                }
 
                 val posWidth = abs(imageRectF.right - imageRectF.left) / abs(targetRectF.right - targetRectF.left)
                 val posHeight = abs(imageRectF.bottom - imageRectF.top) / abs(targetRectF.bottom - targetRectF.top)
@@ -159,7 +160,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                         //Log.v(TAG, "[$count](${r.boundingBox}) : ${r.categories[0].label} : ${r.categories[0].score}")
                         if (r.categories[0].score > confidence_level)
                         {
-                            val drawText = String.format("%s %2.1f%%",r.categories[0].label, +(r.categories[0].score) * 100.0f)
+                            val drawText = String.format("%s %s %2.1f%%",objectHeader, r.categories[0].label, +(r.categories[0].score) * 100.0f)
                             paintRect.color = decideColor(count)
                             paintText.color = decideColor(count)
                             if (rotationDegrees != 0)
