@@ -275,7 +275,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
 
     companion object
     {
-        private const val TFLITE_OBJECT_FILE = "aohina-model0-5.tflite"
+        private const val TFLITE_OBJECT_FILE = "aohina-model0_11.tflite"
         private val TAG = ObjectDetectionModelReader::class.java.simpleName
     }
 }

@@ -4,12 +4,12 @@ plugins {
 }
 
 //  ----- for Jetpack Compose
-def compose_version = '1.2.0-beta01'
-def navigation_version = '2.5.0-rc01'
+def compose_version = '1.2.0-rc02'
+def navigation_version = '2.5.0-rc02'
 
 //  ----- for cameraX
-def camerax_version = "1.1.0-beta03"
-def camerax_view_version = "1.1.0-beta03"
+def camerax_version = "1.2.0-alpha02"
+def camerax_view_version = "1.2.0-alpha02"
 
 android {
     compileSdk 32
@@ -18,8 +18,8 @@ android {
         applicationId "net.osdn.gokigen.objectdetection.a01f"
         minSdk 21
         targetSdk 32
-        versionCode 80000
-        versionName "0.8.0"
+        versionCode 80001
+        versionName "0.8.1"
     }
 
     buildTypes {
@@ -27,9 +27,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-    aaptOptions {
-        noCompress "tflite"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -49,18 +46,21 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    androidResources {
+        noCompress 'tflite'
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.activity:activity-ktx:1.6.0-alpha03'
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.activity:activity-ktx:1.6.0-alpha05'
 
-    implementation "androidx.core:core-splashscreen:1.0.0-beta02"
+    implementation "androidx.core:core-splashscreen:1.0.0-rc01"
 
-    implementation 'com.google.android.material:material:1.6.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.exifinterface:exifinterface:1.3.3'
