@@ -12,14 +12,14 @@ def camerax_version = "1.2.0-beta01"
 def camerax_view_version = "1.2.0-beta01"
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "net.osdn.gokigen.objectdetection.a01f"
         minSdk 21
-        targetSdk 32
-        versionCode 80001
-        versionName "0.8.1"
+        targetSdk 33
+        versionCode 80002
+        versionName "0.8.2"
     }
 
     buildTypes {
