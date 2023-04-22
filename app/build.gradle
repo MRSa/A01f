@@ -25,8 +25,8 @@ android {
         minSdk 21
         //targetSdkPreview = "UpsideDownCake"
         targetSdk 33
-        versionCode 80002
-        versionName "0.8.2"
+        versionCode 80003
+        versionName "0.8.3"
     }
 
     buildTypes {
