@@ -1,6 +1,5 @@
 package net.osdn.gokigen.objectdetection.a01f.ui.view
 
-import android.graphics.Color
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -55,7 +54,7 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 IconToggleButton(checked = isGrid, onCheckedChange = {
                     isGrid = it
                     Log.v("LiveViewScreen", "isGrid: $isGrid  $liveView0")
-                    liveView0?.showGridFrame(isGrid, Color.WHITE)
+                    liveView0?.showGridFrame(isGrid, android.graphics.Color.WHITE)
                 }) {
                     if (isGrid) {
                         Icon(
@@ -115,19 +114,22 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 }
             }
         }
-
         AndroidView(
             factory = { context ->
                 // Creates live-view screen
-                Log.v("", "$isGrid")
-                val liveView = LiveImageView(context)
+                Log.v("LiveViewScreen", "$isGrid")
+                val liveView = LiveImageView(context).also {
+                    it.clipToOutline = true  // https://issuetracker.google.com/issues/242463987
+                }
                 liveView0 = liveView
                 cameraControl.setRefresher(0, liveView, liveView, liveView)
                 liveView.setAnotherDrawer(null, anotherDrawer)
                 liveView.injectDisplay(cameraControl)
                 //liveView.setOnTouchListener(onTouchListener)
+                //Log.v("LiveViewScreen", "-=-=-=-=-=-=- width:${liveView.width}, height:${liveView.height} isGrid:$isGrid -=-=-=-=-=-=-")
+
                 liveView.invalidate()
-                liveView.apply { }
+                liveView.apply {  }
             },
             update = { view ->
                 liveView0 = view
@@ -140,6 +142,7 @@ fun LiveViewScreen(navController: NavHostController, cameraControl: ICameraContr
                 }
                 else
                 {
+                    Log.v("LiveView", "-=-=-=-=-=-=- width:${liveView0?.width}, height:${liveView0?.height} isGrid:$isGrid -=-=-=-=-=-=-")
                     onTouchListener.onTouch(liveView0, it)
                 }
             }
