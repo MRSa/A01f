@@ -37,7 +37,6 @@ class ImageStoreExternal(private val context: FragmentActivity) : IImageStore, I
             if (uriString.isEmpty())
             {
                 // 設定がない場合はデフォルトの場所に...
-                @Suppress("DEPRECATION")
                 uriString = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).path + "/" + context.getString(ID_LABEL_APP_LOCATION) + "/"
             }
         }
@@ -78,15 +77,18 @@ class ImageStoreExternal(private val context: FragmentActivity) : IImageStore, I
             Environment.DIRECTORY_DCIM + File.separator + context.getString(ID_LABEL_APP_LOCATION) // Environment.DIRECTORY_PICTURES  + File.separator + "gokigen" //"DCIM/aira01a/"
         val photoFile = "P" + SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(now) + "_" + id + ".jpg"
 
-        val extStorageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, photoFile)
         values.put(MediaStore.Images.Media.DISPLAY_NAME, photoFile)
         values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, path)
-        values.put(MediaStore.Images.Media.IS_PENDING, true)
-        @Suppress("DEPRECATION")
-        values.put(MediaStore.Images.Media.DATA, outputDir.absolutePath + File.separator + photoFile)
+        val extStorageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, path)
+            values.put(MediaStore.Images.Media.IS_PENDING, true)
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } else {
+            values.put(MediaStore.Images.Media.DATA, outputDir.absolutePath + File.separator + photoFile)
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
 
         var imageUri: Uri? = null
         try

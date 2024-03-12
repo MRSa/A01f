@@ -70,10 +70,10 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         initComponent(context)
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
-    {
-        initComponent(context)
-    }
+    //constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
+    //{
+    //    initComponent(context)
+    //}
 
     private fun initComponent(context: Context)
     {
@@ -120,14 +120,9 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         refreshCanvas()
     }
 
-    override fun onDraw(canvas: Canvas?)
+    override fun onDraw(canvas: Canvas)
     {
         super.onDraw(canvas)
-        if (canvas == null)
-        {
-            Log.v(TAG, " ===== onDraw : canvas is not ready. ==== ")
-            return
-        }
         if (anotherDrawer != null)
         {
             // 別の描画ロジックを使う場合...
