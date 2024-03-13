@@ -89,7 +89,8 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
     {
         try
         {
-            val fileDescriptor = activity.assets.openFd(TFLITE_OBJECT_FILE)
+            val targetObjectFile = if (id != 0) { TFLITE_OBJECT_FILE2 } else { TFLITE_OBJECT_FILE1 }
+            val fileDescriptor = activity.assets.openFd(targetObjectFile)
             val fileSize = fileDescriptor.length.toInt()
             val data = ByteArray(fileSize)
             val inputStream = fileDescriptor.createInputStream()
@@ -275,7 +276,8 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
 
     companion object
     {
-        private const val TFLITE_OBJECT_FILE = "aohina-model0_11.tflite"
+        private const val TFLITE_OBJECT_FILE1 = "aohina-model0_11.tflite"
+        private const val TFLITE_OBJECT_FILE2 = "aohinakoko0_7.tflite"
         private val TAG = ObjectDetectionModelReader::class.java.simpleName
     }
 }

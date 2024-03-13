@@ -135,7 +135,7 @@ class A01fPrefsModel : ViewModel()
                 e.printStackTrace()
             }
         }
-        return (" (aohina)")
+        return (if (number != 0) { " (aohinakoko)" } else { " (aohina)" })
     }
 
     fun setObjectDetectionFileModel(uri: Uri, number: Int = 0)
