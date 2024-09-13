@@ -3,16 +3,14 @@ package jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.wrapper
 import android.util.Log
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicApiService
 import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
-import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
-import jp.osdn.gokigen.gokigenassets.utils.communication.XmlElement
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 class PanasonicCameraDeviceProvider(private val ddUrl: String, private val friendlyName: String, private val modelName: String, private val udn: String, private val iconUrl: String) : IPanasonicCamera
 {
     private var apiServices: List<IPanasonicApiService> = ArrayList()
     private val uniqueID: String = UUID.randomUUID().toString()
+    private var sessionId : String? = null
 
     init
     {
@@ -136,6 +134,7 @@ class PanasonicCameraDeviceProvider(private val ddUrl: String, private val frien
      *
      *
      */
+/*
     fun searchPanasonicCameraDevice(ddUrl: String): IPanasonicCamera?
     {
         var device: PanasonicCameraDeviceProvider? = null
@@ -199,7 +198,8 @@ class PanasonicCameraDeviceProvider(private val ddUrl: String, private val frien
         }
         return device
     }
-
+*/
+/*
     private fun toSchemeAndHost(url: String): String
     {
         val i = url.indexOf("://") // http:// or https://
@@ -207,7 +207,8 @@ class PanasonicCameraDeviceProvider(private val ddUrl: String, private val frien
         val j = url.indexOf("/", i + 3)
         return if (j == -1) { "" } else url.substring(0, j)
     }
-
+*/
+/*
     private fun toHost(url: String): String
     {
         val i = url.indexOf("://") // http:// or https://
@@ -215,10 +216,20 @@ class PanasonicCameraDeviceProvider(private val ddUrl: String, private val frien
         val j = url.indexOf(":", i + 3)
         return if (j == -1) { "" } else url.substring(i + 3, j)
     }
+*/
+
+    override fun getCommunicationSessionId(): String?
+    {
+        return (sessionId)
+    }
+
+    override fun setCommunicationSessionId(sessionId: String?)
+    {
+        this.sessionId = sessionId
+    }
 
     companion object
     {
         private val TAG = PanasonicCameraDeviceProvider::class.java.simpleName
     }
-
 }

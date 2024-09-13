@@ -13,4 +13,7 @@ interface IPanasonicCamera
     fun getPictureUrl(): String
 
     fun getClientDeviceUuId(): String
+
+    fun getCommunicationSessionId() : String?
+    fun setCommunicationSessionId(sessionId: String?)
 }
