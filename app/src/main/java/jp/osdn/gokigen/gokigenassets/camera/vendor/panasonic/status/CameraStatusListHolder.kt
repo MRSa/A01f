@@ -8,7 +8,6 @@ import java.util.ArrayList
 
 class CameraStatusListHolder(private val remote: IPanasonicCamera)
 {
-    val http = SimpleHttpClient()
     companion object
     {
         private val TAG = CameraStatusListHolder::class.java.simpleName
@@ -624,54 +623,12 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
         sendCamSetSettingCmd("filter_setting", setValue, null)
     }
 
-    private fun sendCamGetSettingCmd(type: String)
-    {
-        try
-        {
-            val urlToSend = remote.getCmdUrl() + "cam.cgi?mode=getsetting&type=$type"
-            val thread = Thread {
-                try
-                {
-                    var retryCount = 0
-                    var loop = true
-                    while (loop)
-                    {
-                        val reply: String = http.httpGet(urlToSend, TIMEOUT_MS)
-                        if (reply.indexOf("<result>ok</result>") > 0)
-                        {
-                            loop = false
-                            Log.v(TAG, " ===== $urlToSend (OK) : $reply")
-                        }
-                        else
-                        {
-                            // エラー発生時は何回か(MAX_RETRY_COUNT分)再送する
-                            Log.v(TAG, " $urlToSend (NG) : $reply ")
-                            Thread.sleep(1000) // 1秒待つ
-                            retryCount++
-                            if(retryCount >= MAX_RETRY_COUNT)
-                            {
-                                loop = false
-                            }
-                        }
-                    }
-                }
-                catch (e: Exception)
-                {
-                    e.printStackTrace()
-                }
-            }
-            thread.start()
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-    }
-
     private fun sendCamSetSettingCmd(msgType: String, msgValue: String, value2: String?)
     {
         try
         {
+            val http = SimpleHttpClient()
+
             //Log.v(TAG, "  ------- sendCamSetSettingCmd($msgType, $msgValue, $value2)")
             val sendMessage = if (value2 != null) { "cam.cgi?mode=setsetting&type=$msgType&value=$msgValue&value2=$value2" } else { "cam.cgi?mode=setsetting&type=$msgType&value=$msgValue" }
             val thread = Thread {
@@ -682,7 +639,19 @@ class CameraStatusListHolder(private val remote: IPanasonicCamera)
                     while (loop)
                     {
                         val urlToSend = remote.getCmdUrl() + sendMessage
-                        val reply: String = http.httpGet(urlToSend, TIMEOUT_MS)
+                        val sessionId = remote.getCommunicationSessionId()
+                        val reply = if (!sessionId.isNullOrEmpty())
+                        {
+                            val headerMap: MutableMap<String, String> = HashMap()
+                            headerMap["X-SESSION_ID"] = sessionId
+                            http.httpGetWithHeader(urlToSend, headerMap, null,
+                                TIMEOUT_MS
+                            ) ?: ""
+                        }
+                        else
+                        {
+                            http.httpGet(urlToSend, TIMEOUT_MS)
+                        }
                         if (reply.indexOf("<result>ok</result>") > 0)
                         {
                             loop = false

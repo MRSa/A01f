@@ -5,39 +5,41 @@ import jp.osdn.gokigen.gokigenassets.camera.vendor.panasonic.IPanasonicCamera
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
-
 class SingleShotControl(private val frameDisplayer: IAutoFocusFrameDisplay)
 {
-    private var camera: IPanasonicCamera? = null
-    private val http = SimpleHttpClient()
+    private lateinit var camera: IPanasonicCamera
 
-    /**
-     *
-     *
-     */
     fun setCamera(panasonicCamera: IPanasonicCamera)
     {
         camera = panasonicCamera
     }
 
-    /**
-     *
-     *
-     */
     fun singleShot()
     {
         Log.v(TAG, "singleShot()")
-        if (camera == null)
+        if (!::camera.isInitialized)
         {
-            Log.v(TAG, "IPanasonicCamera is null...")
+            Log.v(TAG, "IPanasonicCamera is not initialized...")
             return
         }
         try
         {
+            val http = SimpleHttpClient()
             val thread = Thread {
                 try
                 {
-                    val reply: String = http.httpGet(camera?.getCmdUrl().toString() + "cam.cgi?mode=camcmd&value=capture", TIMEOUT_MS)
+                    val sessionId = camera.getCommunicationSessionId()
+                    val urlToSend = "${camera.getCmdUrl()}cam.cgi?mode=camcmd&value=capture"
+                    val reply = if (!sessionId.isNullOrEmpty())
+                    {
+                        val headerMap: MutableMap<String, String> = HashMap()
+                        headerMap["X-SESSION_ID"] = sessionId
+                        http.httpGetWithHeader(urlToSend, headerMap, null, TIMEOUT_MS) ?: ""
+                    }
+                    else
+                    {
+                        http.httpGet(urlToSend, TIMEOUT_MS)
+                    }
                     if (!reply.contains("ok"))
                     {
                         Log.v(TAG, "Capture Failure... : $reply")
