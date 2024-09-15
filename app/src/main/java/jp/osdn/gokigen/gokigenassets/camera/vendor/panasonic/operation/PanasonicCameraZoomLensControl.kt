@@ -7,7 +7,7 @@ import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
 class PanasonicCameraZoomLensControl : IZoomLensControl
 {
-    private var camera: IPanasonicCamera? = null
+    private lateinit var camera: IPanasonicCamera
     private var isZooming = false
 
     fun setCamera(panasonicCamera: IPanasonicCamera)
@@ -60,30 +60,36 @@ class PanasonicCameraZoomLensControl : IZoomLensControl
         return isZooming
     }
 
-    /**
-     *
-     *
-     */
     override fun driveZoomLens(isZoomIn: Boolean)
     {
         Log.v(TAG, "driveZoomLens() : $isZoomIn")
-        if (camera == null)
+        if (!::camera.isInitialized)
         {
-            Log.v(TAG, "IPanasonicCameraApi is null...")
+            Log.v(TAG, "IPanasonicCameraApi is not initialized...")
             return
         }
         try
         {
             val http = SimpleHttpClient()
+            val sessionId = camera.getCommunicationSessionId()
             val command: String = if (isZooming) {
-                "cam.cgi?mode=camcmd&value=zoomstop"
+                "${camera.getCmdUrl()}cam.cgi?mode=camcmd&value=zoomstop"
             } else {
-                if (isZoomIn) "cam.cgi?mode=camcmd&value=tele-normal" else "cam.cgi?mode=camcmd&value=wide-normal"
+                if (isZoomIn) "${camera.getCmdUrl()}cam.cgi?mode=camcmd&value=tele-normal" else "${camera.getCmdUrl()}cam.cgi?mode=camcmd&value=wide-normal"
             }
             val thread = Thread {
                 try
                 {
-                    val reply: String = http.httpGet(camera?.getCmdUrl() + command, TIMEOUT_MS)
+                    val reply = if (!sessionId.isNullOrEmpty())
+                    {
+                        val headerMap: MutableMap<String, String> = HashMap()
+                        headerMap["X-SESSION_ID"] = sessionId
+                        http.httpGetWithHeader(command, headerMap, null, TIMEOUT_MS) ?: ""
+                    }
+                    else
+                    {
+                        http.httpGet(command, TIMEOUT_MS)
+                    }
                     if (reply.contains("ok"))
                     {
                         isZooming = !isZooming

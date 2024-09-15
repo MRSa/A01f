@@ -8,33 +8,24 @@ import jp.osdn.gokigen.gokigenassets.liveview.IIndicatorControl
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay
 import jp.osdn.gokigen.gokigenassets.liveview.focusframe.IAutoFocusFrameDisplay.FocusFrameStatus
 import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
-import org.json.JSONObject
 import kotlin.math.floor
-
 
 class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDisplay, private val indicator: IIndicatorControl)
 {
-    private var camera: IPanasonicCamera? = null
+    private lateinit var camera: IPanasonicCamera
     private val http = SimpleHttpClient()
 
-    /**
-     *
-     *
-     */
     fun setCamera(panasonicCamera: IPanasonicCamera)
     {
         camera = panasonicCamera
     }
 
-    /**
-     *
-     *
-     */
     fun lockAutoFocus(point: PointF)
     {
         Log.v(TAG, "lockAutoFocus() : [" + point.x + ", " + point.y + "]")
-        if (camera == null) {
-            Log.v(TAG, "IPanasonicCamera is null...")
+        if (!::camera.isInitialized)
+        {
+            Log.v(TAG, "IPanasonicCamera is not initialized...")
             return
         }
         try
@@ -47,7 +38,19 @@ class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispl
                     val posX = floor(point.x * 1000.0).toInt()
                     val posY = floor(point.y * 1000.0).toInt()
                     Log.v(TAG, "AF ($posX, $posY)")
-                    val reply: String = http.httpGet(camera?.getCmdUrl() + "cam.cgi?mode=camctrl&type=touch&value=" + posX + "/" + posY + "&value2=on", TIMEOUT_MS)
+
+                    val sessionId = camera.getCommunicationSessionId()
+                    val urlToSend = "${camera.getCmdUrl()}cam.cgi?mode=camctrl&type=touch&value=$posX/$posY&value2=on"
+                    val reply = if (!sessionId.isNullOrEmpty())
+                    {
+                        val headerMap: MutableMap<String, String> = HashMap()
+                        headerMap["X-SESSION_ID"] = sessionId
+                        http.httpGetWithHeader(urlToSend, headerMap, null, TIMEOUT_MS) ?: ""
+                    }
+                    else
+                    {
+                        http.httpGet(urlToSend, TIMEOUT_MS)
+                    }
                     if (!reply.contains("ok"))
                     {
                         Log.v(TAG, "setTouchAFPosition() reply is null.")
@@ -82,9 +85,9 @@ class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispl
     fun halfPressShutter(isPressed: Boolean)
     {
         Log.v(TAG, "halfPressShutter() : $isPressed")
-        if (camera == null)
+        if (!::camera.isInitialized)
         {
-            Log.v(TAG, "IPanasonicCamera is null...")
+            Log.v(TAG, "IPanasonicCamera is not initialized...")
             return
         }
         try
@@ -93,7 +96,18 @@ class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispl
                 try
                 {
                     val status = if (isPressed) "on" else "off"
-                    val reply: String = http.httpGet(camera?.getCmdUrl() + "cam.cgi?mode=camctrl&type=touch&value=500/500&value2=" + status, TIMEOUT_MS)
+                    val sessionId = camera.getCommunicationSessionId()
+                    val urlToSend = "${camera.getCmdUrl()}cam.cgi?mode=camctrl&type=touch&value=500/500&value2=$status"
+                    val reply = if (!sessionId.isNullOrEmpty())
+                    {
+                        val headerMap: MutableMap<String, String> = HashMap()
+                        headerMap["X-SESSION_ID"] = sessionId
+                        http.httpGetWithHeader(urlToSend, headerMap, null, TIMEOUT_MS) ?: ""
+                    }
+                    else
+                    {
+                        http.httpGet(urlToSend, TIMEOUT_MS)
+                    }
                     if (!reply.contains("ok"))
                     {
                         Log.v(TAG, "CENTER FOCUS ($status) FAIL...")
@@ -116,16 +130,12 @@ class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispl
         }
     }
 
-    /**
-     *
-     *
-     */
     fun unlockAutoFocus()
     {
         Log.v(TAG, "unlockAutoFocus()")
-        if (camera == null)
+        if (!::camera.isInitialized)
         {
-            Log.v(TAG, "IPanasonicCamera is null...")
+            Log.v(TAG, "IPanasonicCamera is not initialized...")
             return
         }
         try
@@ -133,7 +143,18 @@ class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispl
             val thread = Thread {
                 try
                 {
-                    val reply: String = http.httpGet(camera?.getCmdUrl() + "cam.cgi?mode=camctrl&type=touch&value=500/500&value2=off", TIMEOUT_MS)
+                    val sessionId = camera.getCommunicationSessionId()
+                    val urlToSend = "${camera.getCmdUrl()}cam.cgi?mode=camctrl&type=touch&value=500/500&value2=off"
+                    val reply = if (!sessionId.isNullOrEmpty())
+                    {
+                        val headerMap: MutableMap<String, String> = HashMap()
+                        headerMap["X-SESSION_ID"] = sessionId
+                        http.httpGetWithHeader(urlToSend, headerMap, null, TIMEOUT_MS) ?: ""
+                    }
+                    else
+                    {
+                        http.httpGet(urlToSend, TIMEOUT_MS)
+                    }
                     if (!reply.contains("ok"))
                     {
                         Log.v(TAG, "CENTER FOCUS (UNLOCK) FAIL...")
@@ -153,30 +174,18 @@ class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispl
         }
     }
 
-    /**
-     *
-     *
-     */
     private fun showFocusFrame(rect: RectF, status: FocusFrameStatus, duration: Double)
     {
         frameDisplayer.showFocusFrame(rect, status, duration.toFloat())
         indicator.onAfLockUpdate(FocusFrameStatus.Focused === status)
     }
 
-    /**
-     *
-     *
-     */
     private fun hideFocusFrame()
     {
         frameDisplayer.hideFocusFrame()
         indicator.onAfLockUpdate(false)
     }
 
-    /**
-     *
-     *
-     */
     private fun getPreFocusFrameRect(point: PointF): RectF
     {
         val imageWidth = frameDisplayer.getContentSizeWidth()
@@ -196,10 +205,7 @@ class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispl
         )
     }
 
-    /**
-     *
-     *
-     */
+/*
     private fun findTouchAFPositionResult(replyJson: JSONObject): Boolean
     {
         var afResult = false
@@ -221,6 +227,7 @@ class PanasonicAutoFocusControl(private val frameDisplayer: IAutoFocusFrameDispl
         }
         return afResult
     }
+*/
 
     companion object
     {

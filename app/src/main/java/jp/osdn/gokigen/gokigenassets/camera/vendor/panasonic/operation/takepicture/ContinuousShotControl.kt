@@ -7,28 +7,20 @@ import jp.osdn.gokigen.gokigenassets.utils.communication.SimpleHttpClient
 
 class ContinuousShotControl(private val frameDisplayer: IAutoFocusFrameDisplay)
 {
-    private var camera: IPanasonicCamera? = null
+    private lateinit var camera: IPanasonicCamera
     private val http = SimpleHttpClient()
 
-    /**
-     *
-     *
-     */
     fun setCamera(panasonicCamera: IPanasonicCamera)
     {
         camera = panasonicCamera
     }
 
-    /**
-     *
-     *
-     */
     fun continuousShot(isStop: Boolean)
     {
         Log.v(TAG, "continuousShot()")
-        if (camera == null)
+        if (!::camera.isInitialized)
         {
-            Log.v(TAG, "IPanasonicCamera is null...")
+            Log.v(TAG, "IPanasonicCamera is not initialized...")
             return
         }
         try
@@ -36,8 +28,18 @@ class ContinuousShotControl(private val frameDisplayer: IAutoFocusFrameDisplay)
             val thread = Thread {
                 try
                 {
-                    val command = if (isStop) { camera?.getCmdUrl().toString() + "cam.cgi?mode=camcmd&value=capture_cancel" } else { camera?.getCmdUrl().toString() + "cam.cgi?mode=camcmd&value=capture" }
-                    val reply: String = http.httpGet(command, TIMEOUT_MS)
+                    val sessionId = camera.getCommunicationSessionId()
+                    val command = if (isStop) { camera.getCmdUrl().toString() + "cam.cgi?mode=camcmd&value=capture_cancel" } else { camera.getCmdUrl().toString() + "cam.cgi?mode=camcmd&value=capture" }
+                    val reply = if (!sessionId.isNullOrEmpty())
+                    {
+                        val headerMap: MutableMap<String, String> = HashMap()
+                        headerMap["X-SESSION_ID"] = sessionId
+                        http.httpGetWithHeader(command, headerMap, null, TIMEOUT_MS) ?: ""
+                    }
+                    else
+                    {
+                        http.httpGet(command, TIMEOUT_MS)
+                    }
                     if (!reply.contains("ok"))
                     {
                         Log.v(TAG, "Capture Failure... : $reply")
@@ -62,6 +64,4 @@ class ContinuousShotControl(private val frameDisplayer: IAutoFocusFrameDisplay)
         private val TAG = ContinuousShotControl::class.java.simpleName
         private const val TIMEOUT_MS = 3000
     }
-
-
 }

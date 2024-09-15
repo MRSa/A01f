@@ -18,23 +18,12 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetSocketAddress
 import java.nio.charset.Charset
+import java.security.MessageDigest
 import kotlin.collections.ArrayList
 
 
 class PanasonicSsdpClient(private val context: Context, private val callback: ISearchResultCallback, private val cameraStatusReceiver: ICameraStatusReceiver, private val cameraCoordinator: ICameraControlCoordinator, private val number : Int, private var sendRepeatCount: Int = 0)
 {
-    companion object
-    {
-        private val TAG = PanasonicSsdpClient::class.java.simpleName
-        private const val SEND_TIMES_DEFAULT = 3
-        private const val SEND_WAIT_DURATION_MS = 300
-        private const val SSDP_RECEIVE_TIMEOUT = 4 * 1000 // msec
-        private const val PACKET_BUFFER_SIZE = 4096
-        private const val SSDP_PORT = 1900
-        private const val SSDP_MX = 2
-        private const val SSDP_ADDR = "239.255.255.250"
-        private const val SSDP_ST = "urn:schemas-upnp-org:device:MediaServer:1"
-    }
     private val ssdpRequest: String
 
     init
@@ -50,6 +39,9 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
         var socket: DatagramSocket? = null
         var receivePacket: DatagramPacket
         val packet: DatagramPacket
+        var isUseDigest = false
+        var foundDevice = false
+        var device: IPanasonicCamera? = null
 
         //  要求の送信
         try
@@ -86,7 +78,6 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
         var currentTime = System.currentTimeMillis()
         val foundDevices: MutableList<String?> = ArrayList()
         val array = ByteArray(PACKET_BUFFER_SIZE)
-
         try
         {
             cameraStatusReceiver.onStatusNotify(context.getString(ID_STRING_CONNECT_WAIT_REPLY_CAMERA))
@@ -95,7 +86,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                 receivePacket = DatagramPacket(array, array.size)
                 socket.soTimeout = SSDP_RECEIVE_TIMEOUT
                 socket.receive(receivePacket)
-                val ssdpReplyMessage = String(receivePacket.getData(), 0, receivePacket.length, Charset.forName("UTF-8"))
+                val ssdpReplyMessage = String(receivePacket.data, 0, receivePacket.length, Charset.forName("UTF-8"))
                 var ddUsn: String
                 if (ssdpReplyMessage.contains("HTTP/1.1 200"))
                 {
@@ -112,21 +103,49 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                         {
                             val http = SimpleHttpClient()
                             cameraStatusReceiver.onStatusNotify("LOCATION : $ddLocation")
-                            val device: IPanasonicCamera? = searchPanasonicCameraDevice(ddLocation)
+                            device = searchPanasonicCameraDevice(ddLocation)
                             if (device != null)
                             {
                                 cameraStatusReceiver.onStatusNotify(context.getString(ID_STRING_CONNECT_CAMERA_FOUND) + " " + device.getFriendlyName())
 
                                 ///// カメラへの登録要求... /////
                                 var retryTimeout = 3
-                                val registUrl =
+                                var registUrl =
                                     device.getCmdUrl() + "cam.cgi?mode=accctrl&type=req_acc&value=" + device.getClientDeviceUuId() + "&value2=GOKIGEN_a01Series"
                                 var reply: String = http.httpGet(registUrl, SSDP_RECEIVE_TIMEOUT)
+                                Log.v(TAG, " [req_acc] : $reply")
+
+                                //// 新プロトコルへの対応
+                                if (!reply.contains("ok"))
+                                {
+                                    registUrl = device.getCmdUrl() + "cam.cgi?mode=accctrl&type=req_acc_a&value=" + device.getClientDeviceUuId() + "&value2=GOKIGEN_a01Series"
+                                    reply = http.httpGet(registUrl, SSDP_RECEIVE_TIMEOUT)
+                                    Log.v(TAG, " [req_acc_a] : $reply")
+
+                                    if (!reply.contains("ok"))
+                                    {
+                                        val digest = MessageDigest.getInstance("MD5")
+                                        val value1 = digest.digest(device.getClientDeviceUuId().toByteArray()).joinToString("") { "%02x".format(it) }
+                                        val value2 = digest.digest("GOKIGEN_a01Series".toByteArray()).joinToString("") { "%02x".format(it) }
+
+                                        // ----- 軽く問い合わせ : req_acc_g → req_acc_e の順で呼び出し必要ぽい
+                                        registUrl = "${device.getCmdUrl()}cam.cgi?mode=accctrl&type=req_acc_g&value=${device.getClientDeviceUuId()}&value2=GOKIGEN_a01Series"
+                                        val replyG = http.httpGet(registUrl, SSDP_RECEIVE_TIMEOUT)
+                                        Log.v(TAG, " [req_acc_g] $registUrl : $replyG")
+
+                                        registUrl = "${device.getCmdUrl()}cam.cgi?mode=accctrl&type=req_acc_e&value=${value1}&value2=${value2}"
+                                        reply = http.httpGet(registUrl, SSDP_RECEIVE_TIMEOUT)
+                                        Log.v(TAG, " [req_acc_e] $registUrl : $reply")
+                                        isUseDigest = true
+                                    }
+                                }
+
                                 while (retryTimeout > 0 && reply.contains("ok_under_research_no_msg")) {
                                     try
                                     {
                                         // 1秒待って再送してみる
                                         Thread.sleep(1000)
+                                        Log.v(TAG, " RETRY SEND : $registUrl")
                                     }
                                     catch (e: Exception)
                                     {
@@ -135,12 +154,18 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                                     reply = http.httpGet(registUrl, SSDP_RECEIVE_TIMEOUT)
                                     retryTimeout--
                                 }
-                                if (reply.contains("ok"))
+                                if ((reply.contains("ok"))&&(reply.contains("remote")))
                                 {
-                                    cameraCoordinator.assignCameraControl(number, ddUsn)
+                                    val replyList = reply.split(",")
+                                    val sessionId = if (replyList.size > 4) { replyList[4].trim() } else { "" }
+                                    Log.v(TAG, " RETRY REPLY [OK] ($sessionId) : $reply ")
+                                    if (sessionId.isNotEmpty())
+                                    {
+                                        device.setCommunicationSessionId(sessionId)
+                                    }
+                                    foundDevice = true
                                     callback.onDeviceFound(device)
                                     // カメラと接続できた場合は breakする
-                                    Log.v(TAG, "  assignCameraControl execution Result: " + cameraCoordinator.isAssignedCameraControl(ddUsn))
                                     break
                                 }
                                 // 接続(デバイス登録)エラー...
@@ -164,6 +189,16 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
                 }
                 currentTime = System.currentTimeMillis()
             }
+            if ((foundDevice)&&(isUseDigest)&&(device != null))
+            {
+                // ---- デバイスを登録する
+                val reply0 = entryDeviceToCamera(device)
+                Log.v(TAG, " [setsetting] : $reply0")
+
+                // ---- RAWファイルを転送する設定
+                val reply1 = setRawTransferMode(device)
+                Log.v(TAG, " [rawTransfer] : $reply1")
+            }
         }
         catch (e: Exception)
         {
@@ -177,7 +212,7 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
         {
             try
             {
-                if (!socket.isClosed())
+                if (!socket.isClosed)
                 {
                     socket.close()
                 }
@@ -290,6 +325,58 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
         return if (j == -1) { "" } else url.substring(0, j)
     }
 
+    private fun entryDeviceToCamera(device: IPanasonicCamera) : String
+    {
+        try
+        {
+            val http = SimpleHttpClient()
+            val entryUrl = "${device.getCmdUrl()}cam.cgi?mode=setsetting&type=device_name&value=GOKIGEN_a01Series"
+            val sessionId = device.getCommunicationSessionId()
+            val entryReply = if (!sessionId.isNullOrEmpty())
+            {
+                val headerMap: MutableMap<String, String> = HashMap()
+                headerMap["X-SESSION_ID"] = sessionId
+                http.httpGetWithHeader(entryUrl, headerMap, null, SSDP_RECEIVE_TIMEOUT)
+            }
+            else
+            {
+                http.httpGet(entryUrl, SSDP_RECEIVE_TIMEOUT)
+            }
+            return (entryReply?: "")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ("")
+    }
+
+    private fun setRawTransferMode(device: IPanasonicCamera) : String
+    {
+        try
+        {
+            val http = SimpleHttpClient()
+            val entryUrl = "${device.getCmdUrl()}cam.cgi?mode=setsetting&type=raw_img_send&value=enable"
+            val sessionId = device.getCommunicationSessionId()
+            val entryReply = if (!sessionId.isNullOrEmpty())
+            {
+                val headerMap: MutableMap<String, String> = HashMap()
+                headerMap["X-SESSION_ID"] = sessionId
+                http.httpGetWithHeader(entryUrl, headerMap, null, SSDP_RECEIVE_TIMEOUT)
+            }
+            else
+            {
+                http.httpGet(entryUrl, SSDP_RECEIVE_TIMEOUT)
+            }
+            return (entryReply?: "")
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return ("")
+    }
+
     /**
      * 検索結果のコールバック
      *
@@ -299,5 +386,18 @@ class PanasonicSsdpClient(private val context: Context, private val callback: IS
         fun onDeviceFound(cameraDevice: IPanasonicCamera) // デバイスが見つかった！
         fun onFinished() // 通常の終了をしたとき
         fun onErrorFinished(reason: String?) // エラーが発生して応答したとき
+    }
+
+    companion object
+    {
+        private val TAG = PanasonicSsdpClient::class.java.simpleName
+        private const val SEND_TIMES_DEFAULT = 3
+        private const val SEND_WAIT_DURATION_MS = 300
+        private const val SSDP_RECEIVE_TIMEOUT = 4 * 1000 // msec
+        private const val PACKET_BUFFER_SIZE = 4096
+        private const val SSDP_PORT = 1900
+        private const val SSDP_MX = 2
+        private const val SSDP_ADDR = "239.255.255.250"
+        private const val SSDP_ST = "urn:schemas-upnp-org:device:MediaServer:1"
     }
 }

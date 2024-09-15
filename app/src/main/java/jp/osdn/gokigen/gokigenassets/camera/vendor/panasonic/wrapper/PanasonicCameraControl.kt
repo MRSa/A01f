@@ -92,28 +92,58 @@ class PanasonicCameraControl(private val context: AppCompatActivity, private val
         try
         {
             val http = SimpleHttpClient()
+            val sessionId = panasonicCamera.getCommunicationSessionId()
 
             // 撮影モード(RecMode)に切り替え
-            var reply: String = http.httpGet(panasonicCamera.getCmdUrl() + "cam.cgi?mode=camcmd&value=recmode", TIMEOUT_MS)
+            val recModeUrl = panasonicCamera.getCmdUrl() + "cam.cgi?mode=camcmd&value=recmode"
+            val reply = if (!sessionId.isNullOrEmpty())
+            {
+                val headerMap: MutableMap<String, String> = HashMap()
+                headerMap["X-SESSION_ID"] = sessionId
+                http.httpGetWithHeader(recModeUrl, headerMap, null, TIMEOUT_MS) ?: ""
+            }
+            else
+            {
+                http.httpGet(recModeUrl, TIMEOUT_MS)
+            }
             if (!reply.contains("ok"))
             {
                 Log.v(TAG, "CAMERA REPLIED ERROR : CHANGE RECMODE.")
             }
 
             //  フォーカスに関しては、１点に切り替える（仮）
-            reply = http.httpGet(panasonicCamera.getCmdUrl() + "cam.cgi?mode=setsetting&type=afmode&value=1area", TIMEOUT_MS)
-            if (!reply.contains("ok"))
+            val focusModeUrl = panasonicCamera.getCmdUrl() + "cam.cgi?mode=setsetting&type=afmode&value=1area"
+            val reply1 = if (!sessionId.isNullOrEmpty())
+            {
+                val headerMap: MutableMap<String, String> = HashMap()
+                headerMap["X-SESSION_ID"] = sessionId
+                http.httpGetWithHeader(focusModeUrl, headerMap, null, TIMEOUT_MS) ?: ""
+            }
+            else
+            {
+                http.httpGet(focusModeUrl, TIMEOUT_MS)
+            }
+            if (!reply1.contains("ok"))
             {
                 Log.v(TAG, "CAMERA REPLIED ERROR : CHANGE AF MODE 1area.")
             }
 
             //  測光モードに関しては、画面全体の測光に切り替える（仮）
-            reply = http.httpGet(panasonicCamera.getCmdUrl() + "cam.cgi?mode=setsetting&type=lightmetering&value=multi", TIMEOUT_MS)
-            if (!reply.contains("ok"))
+            val aeModeUrl = panasonicCamera.getCmdUrl() + "cam.cgi?mode=setsetting&type=lightmetering&value=multi"
+            val reply2 = if (!sessionId.isNullOrEmpty())
+            {
+                val headerMap: MutableMap<String, String> = HashMap()
+                headerMap["X-SESSION_ID"] = sessionId
+                http.httpGetWithHeader(aeModeUrl, headerMap, null, TIMEOUT_MS) ?: ""
+            }
+            else
+            {
+                http.httpGet(aeModeUrl, TIMEOUT_MS)
+            }
+            if (!reply2.contains("ok"))
             {
                 Log.v(TAG, "CAMERA REPLIED ERROR : CHANGE AF MODE 1area.")
             }
-
         }
         catch (e: Exception)
         {

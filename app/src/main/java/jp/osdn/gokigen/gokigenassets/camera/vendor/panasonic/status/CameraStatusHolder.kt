@@ -130,9 +130,22 @@ class CameraStatusHolder(private val context: Context, private val remote: IPana
                 {
                     var loop = true
                     val http = SimpleHttpClient()
+                    val sessionId = remote.getCommunicationSessionId()
+                    val urlToSend = "${remote.getCmdUrl()}cam.cgi?mode=setsetting&type=current_sd&value=$slotId"
                     while (loop)
                     {
-                        val reply: String = http.httpGet(remote.getCmdUrl() + "cam.cgi?mode=setsetting&type=current_sd&value=" + slotId, TIMEOUT_MS)
+                        val reply = if (!sessionId.isNullOrEmpty())
+                        {
+                            val headerMap: MutableMap<String, String> = HashMap()
+                            headerMap["X-SESSION_ID"] = sessionId
+                            http.httpGetWithHeader(urlToSend, headerMap, null,
+                                TIMEOUT_MS
+                            ) ?: ""
+                        }
+                        else
+                        {
+                            http.httpGet(urlToSend, TIMEOUT_MS)
+                        }
                         if (reply.indexOf("<result>ok</result>") > 0)
                         {
                             loop = false

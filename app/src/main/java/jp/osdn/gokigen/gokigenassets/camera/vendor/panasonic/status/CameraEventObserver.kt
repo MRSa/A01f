@@ -18,7 +18,6 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
     private var isEventMonitoring = false
     private var isActive = false
 
-
     override fun startStatusWatch(indicator : IMessageDrawer?, notifier: ICameraStatusUpdateNotify?)
     {
         try
@@ -68,8 +67,20 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
                     {
                         try
                         {
+                            val sessionId = remote.getCommunicationSessionId()
+                            val urlToSend = "${remote.getCmdUrl()}cam.cgi?mode=getstate"
+                            val reply = if (!sessionId.isNullOrEmpty())
+                            {
+                                val headerMap: MutableMap<String, String> = HashMap()
+                                headerMap["X-SESSION_ID"] = sessionId
+                                http.httpGetWithHeader(urlToSend, headerMap, null, TIMEOUT_MS) ?: ""
+                            }
+                            else
+                            {
+                                http.httpGet(urlToSend, TIMEOUT_MS)
+                            }
                             // parse reply message
-                            statusHolder.parse(http.httpGet(remote.getCmdUrl() + "cam.cgi?mode=getstate", TIMEOUT_MS))
+                            statusHolder.parse(reply)
                         }
                         catch (e: Exception)
                         {
@@ -93,7 +104,6 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         }
         return true
     }
-
 
     fun setEventListener(listener: ICameraChangeListener)
     {
@@ -131,10 +141,12 @@ class CameraEventObserver(context: Context, private val remote: IPanasonicCamera
         return (statusConvert)
     }
 
+/*
     private fun activate()
     {
         isActive = true
     }
+*/
 
     companion object
     {
