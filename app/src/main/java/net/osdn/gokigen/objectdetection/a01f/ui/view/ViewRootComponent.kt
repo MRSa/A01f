@@ -3,8 +3,9 @@ package net.osdn.gokigen.objectdetection.a01f.ui.view
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -36,9 +37,9 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
         val navController = rememberNavController()
 
         GokigenComposeAppsTheme {
-            Surface(color = MaterialTheme.colors.background) {
+            //Surface(color = MaterialTheme.colors.background) {
                 NavigationMain(navController, liaison.getCameraControl(), liaison.getVibrator(), prefsModel, liaison.getAnotherDrawer())
-            }
+            //}
         }
         Log.v(TAG, " ...NavigationRootComponent...")
     }
@@ -53,7 +54,11 @@ class ViewRootComponent @JvmOverloads constructor(context: Context, attrs: Attri
 fun NavigationMain(navController: NavHostController, cameraControl: ICameraControl, vibrator: IVibrator, prefsModel : A01fPrefsModel, anotherDrawer: IAnotherDrawer)
 {
     GokigenComposeAppsTheme {
-        NavHost(navController = navController, startDestination = "LiveViewScreen") {
+        NavHost(
+            modifier = Modifier.systemBarsPadding(),
+            navController = navController,
+            startDestination = "LiveViewScreen"
+        ) {
             composable("LiveViewScreen") { LiveViewScreen(navController = navController, cameraControl, prefsModel, vibrator, LiveViewOnTouchListener(cameraControl), anotherDrawer) }
             composable("PreferenceScreen") { PreferenceScreen(navController = navController, prefsModel, vibrator) }
         }
