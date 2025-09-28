@@ -10,6 +10,7 @@ def camerax_version = "1.5.0"
 def activity_version = "1.11.0"
 
 android {
+    namespace 'net.osdn.gokigen.objectdetection.a01f'
     compileSdk 36
 
     defaultConfig {
@@ -27,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = "21"
     }
     buildFeatures {
         compose = true
@@ -50,7 +51,6 @@ android {
     androidResources {
         noCompress += "tflite"
     }
-    namespace 'net.osdn.gokigen.objectdetection.a01f'
 }
 
 dependencies {
@@ -93,6 +93,8 @@ dependencies {
     implementation "androidx.camera:camera-view:$camerax_version"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
+    // https://mvnrepository.com/artifact/com.google.mediapipe/tasks-core で最新版を確認
     implementation 'com.google.mediapipe:tasks-core:0.10.29'
+    // https://mvnrepository.com/artifact/com.google.mediapipe/tasks-vision で最新版を確認
     implementation 'com.google.mediapipe:tasks-vision:0.10.29'
 }
