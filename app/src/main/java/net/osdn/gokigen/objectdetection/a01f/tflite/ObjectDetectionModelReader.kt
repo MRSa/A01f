@@ -1,6 +1,5 @@
 package net.osdn.gokigen.objectdetection.a01f.tflite
 
-import android.content.SharedPreferences
 import android.graphics.*
 import android.net.Uri
 import android.provider.MediaStore
@@ -15,22 +14,26 @@ import jp.osdn.gokigen.gokigenassets.liveview.ILiveViewRefresher
 import jp.osdn.gokigen.gokigenassets.liveview.image.IImageProvider
 import net.osdn.gokigen.objectdetection.a01f.R
 import net.osdn.gokigen.objectdetection.a01f.preference.IPreferencePropertyAccessor
-import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.task.vision.detector.Detection
-import org.tensorflow.lite.task.vision.detector.ObjectDetector
-import org.tensorflow.lite.task.vision.detector.ObjectDetector.ObjectDetectorOptions
+import com.google.mediapipe.tasks.core.BaseOptions
+import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.google.mediapipe.tasks.vision.objectdetector.ObjectDetector
+import com.google.mediapipe.tasks.vision.objectdetector.ObjectDetectorResult
+import com.google.mediapipe.tasks.vision.objectdetector.ObjectDetector.ObjectDetectorOptions
+import com.google.mediapipe.framework.image.BitmapImageBuilder
+
 import java.io.DataInputStream
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import java.util.Locale
 import kotlin.math.abs
+import androidx.core.content.edit
 
-class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val id: Int = 0, private val max_detect_objects: Int = 10, private val textPositionOffset: Float = 1.0f, private val colorOffset: Int = 0, private val strokeWidth: Float = 3.0f, private val objectHeader: String = "", private val confidence_level: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
+class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val id: Int = 0, private val maxDetectObjects: Int = 10, private val textPositionOffset: Float = 1.0f, private val colorOffset: Int = 0, private val strokeWidth: Float = 3.0f, private val objectHeader: String = "", private val confidenceLevel: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
 {
     private val contentResolver = activity.contentResolver
     private lateinit var objectDetector: ObjectDetector
     private lateinit var imageProvider: IImageProvider
 
-    private lateinit var detectResults: MutableList<Detection>
+    private lateinit var detectionResult: ObjectDetectorResult
     private lateinit var targetRectF : RectF
     private var isObjectModelReady = false
 
@@ -41,7 +44,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
             if (uri.toString().isEmpty())
             {
                 readInternalObjectModel()
-                return (true)
+                return true
             }
             Log.v(TAG, " $id Requested URI : $uri")
 
@@ -57,16 +60,24 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 val data = ByteArray(size)
                 DataInputStream(stream).readFully(data)
                 Log.v(TAG, " File Size is  : $size bytes. (data: ${data.size})")
-                val options: ObjectDetectorOptions = ObjectDetectorOptions.builder().setMaxResults(max_detect_objects).build()
-                val byteBuffer = ByteBuffer.allocateDirect(size)
-                byteBuffer.order(ByteOrder.nativeOrder())
-                byteBuffer.put(data)
-                objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
+                val options: ObjectDetectorOptions = ObjectDetectorOptions.builder()
+                    .setBaseOptions(BaseOptions.builder()
+                        .setModelAssetBuffer(ByteBuffer.wrap(data))
+                        .build())
+                    .setRunningMode(RunningMode.IMAGE)
+                    .setMaxResults(maxDetectObjects)
+                    // .setMinDetectionConfidence(confidenceLevel)
+                    .build()
+                //val byteBuffer = ByteBuffer.allocateDirect(size)
+                //byteBuffer.order(ByteOrder.nativeOrder())
+                //byteBuffer.put(data)
+                objectDetector = ObjectDetector.createFromOptions(activity, options)
+                //objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
                 //objectDetector = ObjectDetector.createFromBufferAndOptions(ByteBuffer.wrap(data), options)
             }
             isObjectModelReady = true
             Log.v(TAG, " ----- ObjectDetector($id) is Ready! -----")
-            return (true)
+            return true
         }
         catch (e: Exception)
         {
@@ -82,7 +93,7 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
             e.printStackTrace()
         }
         readInternalObjectModel()
-        return (false)
+        return false
     }
 
     private fun readInternalObjectModel()
@@ -96,12 +107,20 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
             val inputStream = fileDescriptor.createInputStream()
             inputStream.read(data, 0 , fileSize)
             Log.v(TAG, " File Size is  : $fileSize bytes. (data: ${data.size})")
-            val options: ObjectDetectorOptions = ObjectDetectorOptions.builder().setMaxResults(max_detect_objects).build()
-            val byteBuffer = ByteBuffer.allocateDirect(fileSize)
-            byteBuffer.order(ByteOrder.nativeOrder())
-            byteBuffer.put(data)
-            objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
+            val options: ObjectDetectorOptions = ObjectDetectorOptions.builder()
+                .setBaseOptions(BaseOptions.builder()
+                    .setModelAssetBuffer(ByteBuffer.wrap(data))
+                    .build())
+                .setRunningMode(RunningMode.IMAGE)
+                .setMaxResults(maxDetectObjects)
+                //.setMinDetectionConfidence(confidenceLevel) // 信頼度の閾値をここで設定
+                .build()
+            //val byteBuffer = ByteBuffer.allocateDirect(fileSize)
+            //byteBuffer.order(ByteOrder.nativeOrder())
+            //byteBuffer.put(data)
+            //objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
             //objectDetector = ObjectDetector.createFromBufferAndOptions(ByteBuffer.wrap(data), options)
+            objectDetector = ObjectDetector.createFromOptions(activity, options)
             isObjectModelReady = true
             Log.v(TAG, " ===== ObjectDetector is Ready! =====")
         }
@@ -154,31 +173,34 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 val centerY = canvas.height / 2
 
                 var count = 1
-                if (::detectResults.isInitialized)
+                if (::detectionResult.isInitialized)
                 {
-                    for (r in detectResults)
+                    for (r in detectionResult.detections())
                     {
+                        val boundingBox = r.boundingBox()
+                        val category = r.categories()[0]
+
                         //Log.v(TAG, "[$count](${r.boundingBox}) : ${r.categories[0].label} : ${r.categories[0].score}")
-                        if (r.categories[0].score > confidence_level)
+                        if (category.score() > confidenceLevel)
                         {
-                            val drawText = String.format("%s %s %2.1f%%",objectHeader, r.categories[0].label, +(r.categories[0].score) * 100.0f)
+                            val drawText = String.format(Locale.US, "%s %s %2.1f%%",objectHeader, category.categoryName(), +(category.score()) * 100.0f)
                             paintRect.color = decideColor(count)
                             paintText.color = decideColor(count)
                             if (rotationDegrees != 0)
                             {
                                 canvas.drawText(
                                     drawText,
-                                    r.boundingBox.centerX() * posWidth + imageRectF.left,
-                                    r.boundingBox.centerY() * posHeight * textPositionOffset + imageRectF.top,
+                                    boundingBox.centerX() * posWidth + imageRectF.left,
+                                    boundingBox.centerY() * posHeight * textPositionOffset + imageRectF.top,
                                     paintText
                                 )
 
                                 canvas.rotate(rotationDegrees.toFloat(), centerX.toFloat(), centerY.toFloat())
                                 canvas.drawRoundRect(
-                                    r.boundingBox.left * posWidth + imageRectF.left,
-                                    r.boundingBox.top * posHeight + imageRectF.top,
-                                    r.boundingBox.right * posWidth + imageRectF.left,
-                                    r.boundingBox.bottom * posHeight + imageRectF.top,
+                                    boundingBox.left * posWidth + imageRectF.left,
+                                    boundingBox.top * posHeight + imageRectF.top,
+                                    boundingBox.right * posWidth + imageRectF.left,
+                                    boundingBox.bottom * posHeight + imageRectF.top,
                                     0.5f,
                                     0.5f,
                                     paintRect
@@ -189,15 +211,15 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                             {
                                 canvas.drawText(
                                     drawText,
-                                    r.boundingBox.centerX() * posWidth + imageRectF.left,
-                                    r.boundingBox.centerY() * posHeight  * textPositionOffset + imageRectF.top,
+                                    boundingBox.centerX() * posWidth + imageRectF.left,
+                                    boundingBox.centerY() * posHeight  * textPositionOffset + imageRectF.top,
                                     paintText
                                 )
                                 canvas.drawRoundRect(
-                                    r.boundingBox.left * posWidth + imageRectF.left,
-                                    r.boundingBox.top * posHeight + imageRectF.top,
-                                    r.boundingBox.right * posWidth + imageRectF.left,
-                                    r.boundingBox.bottom * posHeight + imageRectF.top,
+                                    boundingBox.left * posWidth + imageRectF.left,
+                                    boundingBox.top * posHeight + imageRectF.top,
+                                    boundingBox.right * posWidth + imageRectF.left,
+                                    boundingBox.bottom * posHeight + imageRectF.top,
                                     0.5f,
                                     0.5f,
                                     paintRect
@@ -222,15 +244,15 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
         val choice = ((index + colorOffset) % 11)
         return (when (choice)
         {
-            0 -> Color.rgb(255, 20, 147)   // deeppink
+            0 -> Color.rgb(255, 20, 147)   // deep pink
             1 -> Color.rgb(0, 250, 0)      // green
             2 -> Color.rgb(255, 0, 255)    // magenta
             3 -> Color.rgb(0, 255, 255)    // aqua
             4 -> Color.rgb(127, 255, 212)   // aquamarine
-            5 -> Color.rgb(255,165,0)       // organge
+            5 -> Color.rgb(255,165,0)       // orange
             6 -> Color.rgb(0, 0, 255)       // blue
-            7 -> Color.rgb(144, 238, 144)   // lightgreen
-            8 -> Color.rgb(138, 43, 226)    // blueviolet
+            7 -> Color.rgb(144, 238, 144)   // light green
+            8 -> Color.rgb(138, 43, 226)    // blue violet
             9 -> Color.rgb(250, 128, 114)   // salmon
             10 -> Color.rgb(255, 215, 0)     // gold
             else -> Color.WHITE
@@ -246,8 +268,9 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 val bitmap = imageProvider.getImage()
                 targetRectF = RectF(0.0f, 0.0f, (bitmap.width).toFloat(), (bitmap.height).toFloat())
                 Log.v(TAG, " - - - - Object Detection[$id] (${targetRectF})")
-                detectResults = objectDetector.detect(TensorImage.fromBitmap(bitmap))
-                Log.v(TAG, " - - - - Object Detection[$id] (results: ${detectResults.size})")
+                val mpImage = BitmapImageBuilder(bitmap).build()
+                detectionResult = objectDetector.detect(mpImage)
+                Log.v(TAG, " - - - - Object Detection[$id] (results: ${detectionResult.detections().size})")
             }
             else
             {
@@ -261,9 +284,9 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 try
                 {
                     // for avoid OOM loop...
-                    val editor: SharedPreferences.Editor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-                    editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_1, "")
-                    editor.apply()
+                    PreferenceManager.getDefaultSharedPreferences(activity).edit {
+                        putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_OPTION1_1, "")
+                    }
                 }
                 catch (e: Exception)
                 {
