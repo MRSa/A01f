@@ -26,8 +26,18 @@ import java.nio.ByteBuffer
 import java.util.Locale
 import kotlin.math.abs
 import androidx.core.content.edit
+import java.nio.ByteOrder
 
-class ObjectDetectionModelReader(private val activity: AppCompatActivity, private val id: Int = 0, private val maxDetectObjects: Int = 10, private val textPositionOffset: Float = 1.0f, private val colorOffset: Int = 0, private val strokeWidth: Float = 3.0f, private val objectHeader: String = "", private val confidenceLevel: Float = 0.5f) : IAnotherDrawer, ILiveViewRefresher
+class ObjectDetectionModelReader(
+    private val activity: AppCompatActivity,
+    private val id: Int = 0,
+    private val maxDetectObjects: Int = 10,
+    private val textPositionOffset: Float = 1.0f,
+    private val colorOffset: Int = 0,
+    private val strokeWidth: Float = 3.0f,
+    private val objectHeader: String = "",
+    private val confidenceLevel: Float = 0.5f
+) : IAnotherDrawer, ILiveViewRefresher
 {
     private val contentResolver = activity.contentResolver
     private lateinit var objectDetector: ObjectDetector
@@ -60,20 +70,19 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
                 val data = ByteArray(size)
                 DataInputStream(stream).readFully(data)
                 Log.v(TAG, " File Size is  : $size bytes. (data: ${data.size})")
+                val byteBuffer = ByteBuffer.allocateDirect(size)
+                byteBuffer.order(ByteOrder.nativeOrder())
+                byteBuffer.put(data)
+                byteBuffer.position(0) // バッファの読み取り位置を先頭に戻す
                 val options: ObjectDetectorOptions = ObjectDetectorOptions.builder()
                     .setBaseOptions(BaseOptions.builder()
-                        .setModelAssetBuffer(ByteBuffer.wrap(data))
+                        .setModelAssetBuffer(byteBuffer)
                         .build())
                     .setRunningMode(RunningMode.IMAGE)
                     .setMaxResults(maxDetectObjects)
                     // .setMinDetectionConfidence(confidenceLevel)
                     .build()
-                //val byteBuffer = ByteBuffer.allocateDirect(size)
-                //byteBuffer.order(ByteOrder.nativeOrder())
-                //byteBuffer.put(data)
                 objectDetector = ObjectDetector.createFromOptions(activity, options)
-                //objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
-                //objectDetector = ObjectDetector.createFromBufferAndOptions(ByteBuffer.wrap(data), options)
             }
             isObjectModelReady = true
             Log.v(TAG, " ----- ObjectDetector($id) is Ready! -----")
@@ -107,19 +116,18 @@ class ObjectDetectionModelReader(private val activity: AppCompatActivity, privat
             val inputStream = fileDescriptor.createInputStream()
             inputStream.read(data, 0 , fileSize)
             Log.v(TAG, " File Size is  : $fileSize bytes. (data: ${data.size})")
+            val byteBuffer = ByteBuffer.allocateDirect(fileSize)
+            byteBuffer.order(ByteOrder.nativeOrder())
+            byteBuffer.put(data)
+            byteBuffer.position(0) // バッファの読み取り位置を先頭に戻す
             val options: ObjectDetectorOptions = ObjectDetectorOptions.builder()
                 .setBaseOptions(BaseOptions.builder()
-                    .setModelAssetBuffer(ByteBuffer.wrap(data))
+                    .setModelAssetBuffer(byteBuffer)
                     .build())
                 .setRunningMode(RunningMode.IMAGE)
                 .setMaxResults(maxDetectObjects)
-                //.setMinDetectionConfidence(confidenceLevel) // 信頼度の閾値をここで設定
+                //.setMinDetectionConfidence(confidenceLevel) // 信頼度の閾値を設定
                 .build()
-            //val byteBuffer = ByteBuffer.allocateDirect(fileSize)
-            //byteBuffer.order(ByteOrder.nativeOrder())
-            //byteBuffer.put(data)
-            //objectDetector = ObjectDetector.createFromBufferAndOptions(byteBuffer, options)
-            //objectDetector = ObjectDetector.createFromBufferAndOptions(ByteBuffer.wrap(data), options)
             objectDetector = ObjectDetector.createFromOptions(activity, options)
             isObjectModelReady = true
             Log.v(TAG, " ===== ObjectDetector is Ready! =====")

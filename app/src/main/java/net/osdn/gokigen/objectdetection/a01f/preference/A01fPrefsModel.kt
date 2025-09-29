@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.preference.PreferenceManager
 import jp.osdn.gokigen.gokigenassets.camera.interfaces.ICameraConnectionStatus
+import androidx.core.content.edit
 
 class A01fPrefsModel : ViewModel()
 {
@@ -36,7 +37,7 @@ class A01fPrefsModel : ViewModel()
             preference = PreferenceManager.getDefaultSharedPreferences(activity)
             captureLiveViewImage.value = preference.getBoolean(
                 IPreferencePropertyAccessor.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW,
-                IPreferencePropertyAccessor.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW_DEFAULT_VALUE
+                false
             )
             cameraConnectionMethodIndex.value = (preference.getString(
                 IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX,
@@ -44,7 +45,7 @@ class A01fPrefsModel : ViewModel()
             ))?.toInt()
             useSecondObjectDetectionModel.value = preference.getBoolean(
                 IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL,
-                IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL_DEFAULT_VALUE
+                false
             )
         }
         catch (e: Exception)
@@ -58,9 +59,9 @@ class A01fPrefsModel : ViewModel()
         captureLiveViewImage.value = value
         try
         {
-            val editor: SharedPreferences.Editor = preference.edit()
-            editor.putBoolean(IPreferencePropertyAccessor.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, value)
-            editor.apply()
+            preference.edit {
+                putBoolean(IPreferencePropertyAccessor.CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW, value)
+            }
         }
         catch (e: Exception)
         {
@@ -73,9 +74,12 @@ class A01fPrefsModel : ViewModel()
         useSecondObjectDetectionModel.value = value
         try
         {
-            val editor: SharedPreferences.Editor = preference.edit()
-            editor.putBoolean(IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL, value)
-            editor.apply()
+            preference.edit {
+                putBoolean(
+                    IPreferencePropertyAccessor.PREFERENCE_USE_SECOND_OBJECT_DETECTION_MODEL,
+                    value
+                )
+            }
         }
         catch (e: Exception)
         {
@@ -93,9 +97,9 @@ class A01fPrefsModel : ViewModel()
         cameraConnectionMethodIndex.value = value
         try
         {
-            val editor: SharedPreferences.Editor = preference.edit()
-            editor.putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX, "" + value)
-            editor.apply()
+            preference.edit {
+                putString(IPreferencePropertyAccessor.PREFERENCE_CAMERA_METHOD_INDEX, "" + value)
+            }
         }
         catch (e: Exception)
         {
@@ -153,18 +157,15 @@ class A01fPrefsModel : ViewModel()
 
             try
             {
-                val editor: SharedPreferences.Editor = preference.edit()
-                val key =
-                    if (number == 0)
-                    {
-                        IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_0
-                    }
-                    else
-                    {
-                        IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_1
-                    }
-                editor.putString(key, uri.toString())
-                editor.apply()
+                preference.edit {
+                    val key =
+                        if (number == 0) {
+                            IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_0
+                        } else {
+                            IPreferencePropertyAccessor.PREFERENCE_OBJECT_DETECTION_MODEL_FILE_1
+                        }
+                    putString(key, uri.toString())
+                }
             }
             catch (e: Exception)
             {

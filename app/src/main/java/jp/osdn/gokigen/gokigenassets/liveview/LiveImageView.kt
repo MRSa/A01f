@@ -200,10 +200,18 @@ class LiveImageView : View, ILiveView, ILiveViewRefresher, IShowGridFrame, OnSee
         //Log.v(TAG, " imageRect: [${imageRect.left},${imageRect.top}]-[${imageRect.right},${imageRect.bottom}] ")
         //Log.v(TAG, " viewRect: [${viewRect.left},${viewRect.top}]-[${viewRect.right},${viewRect.bottom}] ")
 
-        canvas.rotate(degrees.toFloat(), centerX.toFloat(), centerY.toFloat())
-        canvas.drawBitmap(imageBitmap, imageRect, viewRect, paint)
-        canvas.rotate(-degrees.toFloat(), centerX.toFloat(), centerY.toFloat())
-
+        try
+        {
+            canvas.rotate(degrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+            canvas.drawBitmap(imageBitmap, imageRect, viewRect, paint)
+            canvas.rotate(-degrees.toFloat(), centerX.toFloat(), centerY.toFloat())
+        }
+        catch (t: Throwable)
+        {
+            // 描画データが大きすぎる場合、、、
+            Log.v(TAG, "image is too large. ($width x $height)")
+            t.printStackTrace()
+        }
         return (viewRect)
     }
 
